@@ -1,9 +1,9 @@
-export default function SideNav() {
+const SideNav = () => {
   return (
     <nav className='w-44 ml-4 lg:ml-12 lg:px-8'>
     <ul className='mt-12  text-xl font-semibold'>
-      <li className='text-gray-400 mb-5 hover:text-gray-800 cursor-pointer' href='#'><a>Contact</a></li>
-      <li className='text-gray-400 mb-5 hover:text-gray-800 cursor-pointer' href='#'><a>Profile</a></li>
+      <li className='text-gray-400 mb-5 hover:text-gray-800 cursor-pointer'><a>Contact</a></li>
+      <li className='text-gray-400 mb-5 hover:text-gray-800 cursor-pointer'><a>Profile</a></li>
     </ul>
     <br />
     <figure>
@@ -16,3 +16,4 @@ export default function SideNav() {
     </nav>
   )
 }
+export default SideNav

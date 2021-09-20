@@ -1,8 +1,9 @@
+import type { NextPage } from 'next'
 import Conversation from '../components/Conversation'
 import Navbar from '../components/Navbar'
 import SideNav from '../components/SideNav'
 
-export default function Home() {
+ const Home: NextPage = () => {
   return (
     <div className='flex flex-row'>
       <div className='h-screen w-100 flex flex-grow flex-col'>
@@ -15,3 +16,4 @@ export default function Home() {
     </div>
   )
 }
+export default Home;
