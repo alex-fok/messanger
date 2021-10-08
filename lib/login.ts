@@ -1,8 +1,8 @@
 import serializeToken from './authentication/serializeToken'
 
 const credentials = {
-  username: 'Alpha1',
-  password: 'BetaDelta'
+  username: 'username',
+  password: 'password'
 }
 
 const loginHandler = (username: string, password: string):Promise<string> => {
