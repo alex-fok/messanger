@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import loginHandler from '../../handler/login'
+import loginHandler from '../../lib/login'
 
 export default function login(req:NextApiRequest, res:NextApiResponse) {
   loginHandler(req.body.username, req.body.password)
