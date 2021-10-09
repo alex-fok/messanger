@@ -45,7 +45,6 @@ const useMode = (initMode: 'login' | 'signup') :
     value: nickname,
     onChange: setNickName
   }
-  
 
   const passField = {
     id: 'password',
@@ -70,8 +69,7 @@ const useMode = (initMode: 'login' | 'signup') :
   return [mode, content[mode], setMode]
 }
 
-
-const FormEl = (props: {field:Field}) => {
+const FieldsetEl = (props: {field:Field}) => {
   return (
     <>
       <label className='font-light' htmlFor={props.field.id}>{props.field.label}</label>
@@ -111,7 +109,7 @@ const Login = () => {
   },[])
 
   const errorMsg = () => {
-    return <div className='text-red-600 p-2'>ERROR: Invalid Credentials</div>
+    return <p className='text-red-600 text-xs ml-4'>ERROR: Invalid Credentials</p>
   }
 
   return (
@@ -119,19 +117,27 @@ const Login = () => {
       <Head>
         <title>Sign In</title>
       </Head>
-      <article className='w-96 m-auto p-4 rounded-md bg-gray-100 flex flex-col justify-center filter drop-shadow-xl'>
+      <form
+        className='w-96 m-auto p-4 rounded-md bg-gray-100 flex flex-col justify-center filter drop-shadow-xl'
+        method='POST'
+        onSubmit={e => {
+          e.preventDefault() 
+          mode === 'login' ? processLogin() : processRegistraion()}
+        }
+      >
         <h1 className='m-2 text-xl font-semibold'>{content.title}</h1>
-        <section className='p-4 grid grid-cols-3 gap-x-3 gap-y-5 mb-2'>
+        <fieldset className='m-4 grid grid-cols-3 gap-x-3 gap-y-5'>
           {content.fields.map(field => {
             return (
-              <FormEl field={field} key={field.id}/>
+              <FieldsetEl field={field} key={field.id}/>
             )
           })}
-        </section>
-        <button className='align-center mx-auto mb-2 py-1 px-2 bg-gray-200 rounded' onClick={mode === 'login' ? processLogin : processRegistraion}>Submit</button>
-        <a className='pl-2 text-blue-500 cursor-pointer' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
+        </fieldset>
         {invalidCred ? errorMsg() : null} 
-      </article>
+        <input className='align-center mx-auto rounded my-2 py-1 px-2 bg-gray-200 cursor-pointer' type='submit' value='Submit'/>
+        <a className='ml-2 text-blue-500 text-xs font-light cursor-pointer mb-2' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
+        
+      </form>
     </div>
   )
 }
