@@ -1,54 +1,141 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { GetServerSidePropsContext } from 'next'
+
 import axios from 'axios'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 import Head from 'next/head'
+import cookie from 'cookie'
+import userHandler from '../lib/user'
+import { FormContent, Field } from '../types/form'
+
+export async function getServerSideProps(context:GetServerSidePropsContext) {
+  const {jwt} = cookie.parse(context.req.headers?.cookie || '')
+  if (jwt) {
+    const info = userHandler(jwt)
+    console.log(info)
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+  return {props: {}}
+}
+
+const useMode = (initMode: 'login' | 'signup') : 
+  [string, FormContent, React.Dispatch<React.SetStateAction<'login' | 'signup'>>] => {
+  const [username, setUserName] = useState('')
+  const [nickname, setNickName] = useState('')
+  const [password, setPassword] = useState('')
+  const [mode, setMode] = useState(initMode)
+
+  const content = {
+    'login': {
+      title: 'SIGN IN',
+      values: { username, password },
+      fields: [{
+        id: 'username',
+        type: 'text',
+        label: 'Username',
+        value: username,
+        onChange: setUserName
+      }, {
+        id: 'password',
+        type: 'password',
+        label: 'Password',
+        value: password,
+        onChange: setPassword
+      }]
+    },
+    'signup': {
+      title: 'CREATE ACCOUNT',
+      values: { username, nickname, password },
+      fields: [{
+        id: 'username',
+        type: 'text',
+        label: 'Username',
+        value: username,
+        onChange: setUserName
+      }, {
+        id: 'nickname',
+        type: 'text',
+        label: 'Nickname',
+        value: nickname,
+        onChange: setNickName
+      }, {
+        id: 'password',
+        type: 'password',
+        label: 'Password',
+        value: password,
+        onChange: setPassword
+      }]
+    }
+  }
+  return [mode, content[mode], setMode]
+}
+
+
+const FormEl = (props: {field:Field}) => {
+  return (
+    <>
+      <label className='font-light' htmlFor={props.field.id}>{props.field.label}</label>
+      <input className='col-span-2 border border-gray-300 rounded' type={props.field.type} id={props.field.id} name={props.field.id} onChange={e => props.field.onChange(e.currentTarget.value)}/>
+    </>
+  )
+}
 
 const Login = () => {
-  const [username, setUserName] = useState('username')
-  const [password, setPassword] = useState('password')
   const [invalidCred, setInvalidCred] = useState(false)
-  
-  const router = useRouter()
+  const [mode, content, setMode] = useMode('login')
 
   const processLogin = () => {
     axios({
       method: 'post',
       url: 'api/login',
-      data: { username, password }
+      data: {
+        username:content.values.username,
+        password:content.values.password
+      },
+      withCredentials: true
     })
     .then(res => {
       document.cookie = res.data.jwt
-      router.push('/')
+      Router.push('/')
     })
-    .catch(err => {
+    .catch(() => {
       setInvalidCred(true)
     })
   }
+
+  const processRegistraion = () => {
+
+  }
   useEffect(() => {
-    router.prefetch('/')
-    
+    Router.prefetch('/')
   },[])
 
   const errorMsg = () => {
     return <div className='text-red-600 p-2'>ERROR: Invalid Credentials</div>
   }
+
   return (
-    <div className='w-100 h-screen flex items-center bg-gray-400'>  
+    <div className='w-100 flex flex-row h-screen items-center bg-gray-400'>
       <Head>
         <title>Sign In</title>
       </Head>
-      <article className='w-96 h-64 m-auto border-2 rounded-md flex flex-col bg-gray-100 justify-center p-4'>
-        <h1 className='m-2 text-xl font-semibold'>SIGN IN</h1>
-        <section className='p-4'>
-          <label className='mr-3 font-light' htmlFor='username'>Username</label>
-          <input type='text' id='username' name='username' onChange={e => setUserName(e.currentTarget.value)}/>
+      <article className='w-96 m-auto p-4 rounded-md bg-gray-100 flex flex-col justify-center filter drop-shadow-xl'>
+        <h1 className='m-2 text-xl font-semibold'>{content.title}</h1>
+        <section className='p-4 grid grid-cols-3 gap-x-3 gap-y-5 mb-2'>
+          {content.fields.map(field => {
+            return (
+              <FormEl field={field} key={field.id}/>
+            )
+          })}
         </section>
-        <section className='p-4'>
-          <label className='mr-3 font-light' htmlFor='password'>Password</label>
-          <input type='password' id='password' onChange={e => setPassword(e.currentTarget.value)}/>
-        </section>
-        {invalidCred ? errorMsg() : null}
-        <button className='self-center py-1 px-2 bg-gray-200' onClick={processLogin}>Submit</button>
+        <button className='align-center mx-auto py-1 px-2 bg-gray-200 rounded' onClick={mode === 'login' ? processLogin : processRegistraion}>Submit</button>
+        <a className='pl-2 text-blue-500 cursor-pointer' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
+        {invalidCred ? errorMsg() : null} 
       </article>
     </div>
   )
