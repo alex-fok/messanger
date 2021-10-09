@@ -30,11 +30,9 @@ const Home = ({data}: InferGetServerSidePropsType<typeof getServerSideProps>) =>
   return (
     <Layout>
       {console.log('data: ', data)}
-      <div className='w-full flex flex-grow flex-col'>
-        <div className='flex flex-row h-5/6'>
-          <SideNav />
-          <Conversation/>
-        </div>
+      <div className='flex flex-row h-full'>
+        <SideNav />
+        <Conversation/>
       </div>
     </Layout>
   )

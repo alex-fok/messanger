@@ -4,8 +4,8 @@ import autoResizeTextArea from '../utils/htmlElements/autoResizeTextArea'
 
 const Conversation = () => {
   return (
-    <div className='container w-5/6 sm:w-3/4 pt-6 pb-12 pr-12 md:pr-36 lg:pr-48 flex flex-col mx-auto'>
-      <ul className='rounded-md border-2 border-gray-300 flex-grow focus:outline-none px-4 py-4 overflow-hidden overflow-y-scroll'>
+    <div className='w-5/6 sm:w-3/4 pt-6 pb-12 pr-12 md:pr-36 lg:pr-48 flex flex-col h-full'>
+      <ul className='rounded-md border-2 border-gray-300 h-full focus:outline-none px-4 py-4 overflow-hidden overflow-y-scroll'>
       <li className='py-2 mb-3'>
         <p className='mb-3'>Person 1 : </p>
         <p className='rounded-md border border-gray-400 inline-block py-2 px-4'>
