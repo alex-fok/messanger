@@ -30,48 +30,43 @@ const useMode = (initMode: 'login' | 'signup') :
   const [password, setPassword] = useState('')
   const [mode, setMode] = useState(initMode)
 
-  const content = {
+  const userField = {
+    id: 'username',
+    type: 'text',
+    label: 'Username',
+    value: username,
+    onChange: setUserName
+  }
+
+  const nickField = {
+    id: 'nickname',
+    type: 'text',
+    label: 'Nickname',
+    value: nickname,
+    onChange: setNickName
+  }
+  
+
+  const passField = {
+    id: 'password',
+    type: 'password',
+    label: 'Password',
+    value: password,
+    onChange: setPassword
+  }
+
+  const content: {[key: string]: FormContent} = {
     'login': {
       title: 'SIGN IN',
       values: { username, password },
-      fields: [{
-        id: 'username',
-        type: 'text',
-        label: 'Username',
-        value: username,
-        onChange: setUserName
-      }, {
-        id: 'password',
-        type: 'password',
-        label: 'Password',
-        value: password,
-        onChange: setPassword
-      }]
+      fields: [userField, passField]
     },
     'signup': {
       title: 'CREATE ACCOUNT',
       values: { username, nickname, password },
-      fields: [{
-        id: 'username',
-        type: 'text',
-        label: 'Username',
-        value: username,
-        onChange: setUserName
-      }, {
-        id: 'nickname',
-        type: 'text',
-        label: 'Nickname',
-        value: nickname,
-        onChange: setNickName
-      }, {
-        id: 'password',
-        type: 'password',
-        label: 'Password',
-        value: password,
-        onChange: setPassword
-      }]
+      fields: [userField, nickField, passField]
     }
-  }
+  } 
   return [mode, content[mode], setMode]
 }
 
@@ -133,7 +128,7 @@ const Login = () => {
             )
           })}
         </section>
-        <button className='align-center mx-auto py-1 px-2 bg-gray-200 rounded' onClick={mode === 'login' ? processLogin : processRegistraion}>Submit</button>
+        <button className='align-center mx-auto mb-2 py-1 px-2 bg-gray-200 rounded' onClick={mode === 'login' ? processLogin : processRegistraion}>Submit</button>
         <a className='pl-2 text-blue-500 cursor-pointer' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
         {invalidCred ? errorMsg() : null} 
       </article>
