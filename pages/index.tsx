@@ -1,9 +1,11 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import Conversation from '../components/Conversation'
-import Navbar from '../components/Navbar'
-import SideNav from '../components/SideNav'
 import cookie from 'cookie'
-import getUserInfo from '../handler/user'
+import React from 'react'
+
+import Layout from '../components/Layout'
+import SideNav from '../components/SideNav'
+import Conversation from '../components/Conversation'
+import getUser from '../lib/user'
 
 export async function getServerSideProps(context:GetServerSidePropsContext) {
   const redirectToLogin = {
@@ -19,24 +21,22 @@ export async function getServerSideProps(context:GetServerSidePropsContext) {
   
   return {
     props: {
-      data: getUserInfo(jwt || ''),
-      error: null
+      data: await getUser(jwt),
     }
   }
 }
 
-const Home = ({data, error}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({data}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <div className='flex flex-row'>
-      {data ? console.log('data: ', data) : console.log('error: ', error)}
-      <div className='h-screen w-100 flex flex-grow flex-col'>
-        <Navbar />
+    <Layout>
+      {console.log('data: ', data)}
+      <div className='w-full flex flex-grow flex-col'>
         <div className='flex flex-row h-5/6'>
           <SideNav />
           <Conversation/>
         </div>
       </div>
-    </div>
+    </Layout>
   )
 }
 export default Home;
