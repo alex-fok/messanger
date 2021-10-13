@@ -9,7 +9,7 @@ const createAccount = async (req:NextApiRequest, res: NextApiResponse) => {
       jwt: await serializeToken({username})
     })
   }).catch(error => {
-    res.json({error})
+    res.json(error)
   })
 }
 export default createAccount

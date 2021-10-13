@@ -70,16 +70,24 @@ const useMode = (initMode: 'login' | 'signup') :
 }
 
 const FieldsetEl = (props: {field:Field}) => {
+  const {id, label, type, onChange, value} = props.field
   return (
     <>
-      <label className='font-light' htmlFor={props.field.id}>{props.field.label}</label>
-      <input className='col-span-2 border border-gray-300 rounded' type={props.field.type} id={props.field.id} name={props.field.id} onChange={e => props.field.onChange(e.currentTarget.value)}/>
+      <label className='font-light' htmlFor={id}>{label}</label>
+      <input
+        className='col-span-2 border border-gray-300 rounded'
+        type={type}
+        id={id}
+        name={id}
+        onChange={e => onChange(e.currentTarget.value)}
+        value={value}
+      />
     </>
   )
 }
 
 const Login = () => {
-  const [invalidCred, setInvalidCred] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const [mode, content, setMode] = useMode('login')
 
   const processLogin = () => {
@@ -97,7 +105,7 @@ const Login = () => {
       Router.push('/')
     })
     .catch(() => {
-      setInvalidCred(true)
+      setErrorMessage('Invalid Credentials')
     })
   }
 
@@ -112,20 +120,27 @@ const Login = () => {
       }
     })
     .then(res => {
+      if (res.data.error) setErrorMessage(res.data.error)
       document.cookie = res.data.jwt
       Router.push('/')
     })
     .catch(() => {
-      console.log('Create Account Failed')
+      setErrorMessage('Create Account Failed')
     })
   }
   useEffect(() => {
     Router.prefetch('/')
   },[])
 
-  const errorMsg = () => {
-    return <p className='text-red-600 text-xs ml-4'>ERROR: Invalid Credentials</p>
+  const changeMode = () => {
+    setErrorMessage('')
+    content.fields.forEach(field => {
+      field.onChange('')
+    })
+    setMode(mode==='login' ? 'signup': 'login')
   }
+
+  const displayErrorMessage = () => <p className='text-red-600 text-xs ml-4'>ERROR: {errorMessage}</p>
 
   return (
     <div className='w-100 flex flex-row h-screen items-center bg-gray-400'>
@@ -148,9 +163,14 @@ const Login = () => {
             )
           })}
         </fieldset>
-        {invalidCred && mode === 'login' ? errorMsg() : null} 
+        {errorMessage.length ? displayErrorMessage() : null} 
         <input className='align-center mx-auto rounded my-2 py-1 px-2 bg-gray-200 cursor-pointer' type='submit' value='Submit'/>
-        <a className='ml-2 text-blue-500 text-xs font-light cursor-pointer mb-2' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
+        <a
+          className='ml-2 text-blue-500 text-xs font-light cursor-pointer mb-2'
+          onClick={changeMode}
+        >
+          {mode === 'signup' ? 'Sign in' : 'Create New Account'}
+        </a>
         
       </form>
     </div>
