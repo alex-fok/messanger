@@ -20,14 +20,14 @@ const createAccount = async ({username, password, nickname}: CreateAccountInput)
 
   const [isUserValid, userError] = validateInput({name: 'Username', value: username}, ['atLeast3'])
   const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
-  const [isNickValid, nickError] = byname === username 
+  const [isNickValid, nickError] = byname === username
     ? [isUserValid, userError] 
     : validateInput({name: 'Nickname', value: byname}, ['atLeast3'])
 
   const isInputValid = isUserValid && isPassValid && isNickValid
   const errorMessage = (!isUserValid && userError) || (isPassValid && passError) || (!isNickValid && nickError) || ''
   
-  if (isInputValid)
+  if (!isInputValid)
     return new Promise<CreateAccountType>((res, rej) => rej({
       error: errorMessage
     }))
