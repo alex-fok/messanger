@@ -18,22 +18,24 @@ const createAccount = async ({username, password, nickname}: CreateAccountInput)
   
   const byname = nickname.length === 0 ? username : nickname
 
-  const inputsAreValid = 
-    validateInput(username, ['atLeast3']) 
-    && validateInput(password, ['atLeast8'])
-    && (byname === username || validateInput(byname, ['atLeast3']))
-    
-  if (!inputsAreValid){
-    return new Promise<CreateAccountType>((res, rej) => rej({
-      error: 'User input does not meet requirement'
-    }))
-  }
+  const [isUserValid, userError] = validateInput({name: 'Username', value: username}, ['atLeast3'])
+  const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
+  const [isNickValid, nickError] = byname === username 
+    ? [isUserValid, userError] 
+    : validateInput({name: 'Nickname', value: byname}, ['atLeast3'])
 
-  if(await db.collection('user').findOne({username})){
+  const isInputValid = isUserValid && isPassValid && isNickValid
+  const errorMessage = (!isUserValid && userError) || (isPassValid && passError) || (!isNickValid && nickError) || ''
+  
+  if (isInputValid)
+    return new Promise<CreateAccountType>((res, rej) => rej({
+      error: errorMessage
+    }))
+
+  if(await db.collection('user').findOne({username}))
     return new Promise<CreateAccountType>((res, rej) => rej({
       error: 'Username already existed'
     }))
-  }
 
   const statusPromise = new Promise<CreateAccountType>((res, rej) => {
     const salt = crypto.randomBytes(8).toString('hex')
