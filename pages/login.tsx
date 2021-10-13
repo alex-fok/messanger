@@ -84,8 +84,8 @@ const Login = () => {
 
   const processLogin = () => {
     axios({
-      method: 'post',
-      url: 'api/login',
+      method: 'POST',
+      url: '/api/login',
       data: {
         username:content.values.username,
         password:content.values.password
@@ -102,7 +102,22 @@ const Login = () => {
   }
 
   const processRegistraion = () => {
-
+    axios({
+      method: 'POST',
+      url: 'api/createAccount',
+      data: {
+        username: content.values.username,
+        password: content.values.password,
+        nickname: content.values.nickname
+      }
+    })
+    .then(res => {
+      document.cookie = res.data.jwt
+      Router.push('/')
+    })
+    .catch(() => {
+      console.log('Create Account Failed')
+    })
   }
   useEffect(() => {
     Router.prefetch('/')
@@ -133,7 +148,7 @@ const Login = () => {
             )
           })}
         </fieldset>
-        {invalidCred ? errorMsg() : null} 
+        {invalidCred && mode === 'login' ? errorMsg() : null} 
         <input className='align-center mx-auto rounded my-2 py-1 px-2 bg-gray-200 cursor-pointer' type='submit' value='Submit'/>
         <a className='ml-2 text-blue-500 text-xs font-light cursor-pointer mb-2' onClick={() => setMode(mode === 'login' ? 'signup': 'login')}>{ mode === 'signup' ? 'Sign in' : 'Create New Account'}</a>
         
