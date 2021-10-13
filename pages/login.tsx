@@ -119,6 +119,13 @@ const Login = () => {
   }
 
   const processRegistraion = () => {
+    const {username, password, nickname} = content.values
+    const [isUserValid, userError] = validateInput({name: 'Username', value: username}, ['atLeast3'])
+    const [isNickValid, nickError] = validateInput({name: 'Nickname', value: nickname}, ['atLeast3OrEmpty']) 
+    const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
+
+    const errorMsg = (!isUserValid && userError) || (!isPassValid && passError) || (!isNickValid && nickError) ||''
+    if (!isUserValid || !isPassValid || isNickValid) return setErrorMessage(errorMsg)
     axios({
       method: 'POST',
       url: 'api/createAccount',
