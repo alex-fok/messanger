@@ -125,7 +125,7 @@ const Login = () => {
     const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
 
     const errorMsg = (!isUserValid && userError) || (!isPassValid && passError) || (!isNickValid && nickError) ||''
-    if (!isUserValid || !isPassValid || !isNickValid) return setErrorMessage(errorMsg)
+    if (!errorMsg.length) return setErrorMessage(errorMsg)
     axios({
       method: 'POST',
       url: 'api/createAccount',
