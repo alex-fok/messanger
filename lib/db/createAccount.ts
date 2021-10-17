@@ -14,8 +14,9 @@ type CreateAccountType = SuccessType | ErrorType
 
 const createAccount = async ({username, password, nickname}: CreateAccountInput) => {
   const client = await mongodb
+  if (!client) return
+
   const db = client.db()
-  
   const byname = nickname.length === 0 ? username : nickname
 
   const [isUserValid, userError] = validateInput({name: 'Username', value: username}, ['atLeast3'])

@@ -4,8 +4,9 @@ import crypto from 'crypto'
 
 const login = async (username: string, password: string):Promise<string | unknown> => {
   const client = await mongodb
+  if (!client) return
+
   const db = client.db()
-  
   return new Promise(async(res, rej) => {
     const user = await db.collection('user').findOne({username: username})
 
