@@ -22,15 +22,12 @@ const createAccount = async ({username, password, nickname}: CreateAccountInput)
   const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
   const [isNickValid, nickError] = byname === username
     ? [isUserValid, userError] 
-    : validateInput({name: 'Nickname', value: byname}, ['atLeast3'])
+    : validateInput({name: 'Nickname', value: byname}, ['atLeast3OrEmpty'])
 
-  const isInputValid = isUserValid && isPassValid && isNickValid
-  const errorMessage = (!isUserValid && userError) || (isPassValid && passError) || (!isNickValid && nickError) || ''
+  const error = (!isUserValid && userError) || (!isPassValid && passError) || (!isNickValid && nickError) || ''
   
-  if (!isInputValid)
-    return new Promise<CreateAccountType>((res, rej) => rej({
-      error: errorMessage
-    }))
+  if (error.length)
+    return new Promise<CreateAccountType>((res, rej) => rej({ error }))
 
   if(await db.collection('user').findOne({username}))
     return new Promise<CreateAccountType>((res, rej) => rej({
