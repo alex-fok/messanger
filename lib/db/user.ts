@@ -1,8 +1,10 @@
 import { JwtPayload } from 'jsonwebtoken'
-import verifyToken from './authentication/verifyToken'
-import mongodb from './db/mongodb'
+import verifyToken from '../authentication/verifyToken'
+import mongodb from './mongodb'
 
-const user = async (requestCookie: string) => {
+type userReturnType = {username: string} | null
+
+const user = async (requestCookie: string): Promise<userReturnType> => {
   const {username} = verifyToken(requestCookie) as JwtPayload
   if (username) {
     const client = await mongodb
@@ -10,8 +12,8 @@ const user = async (requestCookie: string) => {
     const user = await db.collection('user').findOne({username})
     return user ? {
       username: user.username
-    } : {}
+    } : null
   }
-  return username
+  return null
 }
 export default user

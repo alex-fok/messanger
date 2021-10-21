@@ -5,7 +5,8 @@ import React from 'react'
 import Layout from '../components/Layout'
 import SideNav from '../components/SideNav'
 import Conversation from '../components/Conversation'
-import getUser from '../lib/user'
+import getUser from '../lib/db/user'
+import mongodb from '../lib/db/mongodb'
 
 export async function getServerSideProps(context:GetServerSidePropsContext) {
   const redirectToLogin = {

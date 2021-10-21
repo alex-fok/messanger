@@ -5,15 +5,15 @@ import axios from 'axios'
 import Router from 'next/router'
 import Head from 'next/head'
 import cookie from 'cookie'
-import userHandler from '../lib/user'
+import getUser from '../lib/db/user'
 import { FormContent, Field } from '../types/form'
 import validateInput from '../utils/validateInput'
 
 export async function getServerSideProps(context:GetServerSidePropsContext) {
   const {jwt} = cookie.parse(context.req.headers?.cookie || '')
   if (jwt) {
-    const info = userHandler(jwt)
-    console.log(info)
+    const user = await getUser(jwt)
+    if (user)
     return {
       redirect: {
         destination: '/',
@@ -24,13 +24,12 @@ export async function getServerSideProps(context:GetServerSidePropsContext) {
   return {props: {}}
 }
 
-const useMode = (initMode: 'login' | 'signup') : 
+const useMode = (modeType: 'login' | 'signup') : 
   [string, FormContent, React.Dispatch<React.SetStateAction<'login' | 'signup'>>] => {
   const [username, setUserName] = useState('')
   const [nickname, setNickName] = useState('')
   const [password, setPassword] = useState('')
-  const [mode, setMode] = useState(initMode)
-  
+  const [mode, setMode] = useState(modeType)
 
   const userField = {
     id: 'username',
@@ -98,7 +97,7 @@ const Login = () => {
     const [isPassValid, passError] = validateInput({name: 'Password', value: password}, ['atLeast8'])
 
     const errorMsg = (!isUserValid && userError) || (!isPassValid && passError) || ''
-    if (!isUserValid || !isPassValid) return setErrorMessage(errorMsg)
+    if (errorMsg.length) return setErrorMessage(errorMsg)
 
     axios({
       method: 'POST',
