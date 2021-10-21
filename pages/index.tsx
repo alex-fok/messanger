@@ -1,5 +1,4 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import cookie from 'cookie'
 import React from 'react'
 
 import Layout from '../components/Layout'
@@ -8,7 +7,7 @@ import Conversation from '../components/Conversation'
 import getJwtPayload from '../lib/authentication/getJwtPayload'
 
 export async function getServerSideProps(context:GetServerSidePropsContext) {
-  const payload = getJwtPayload(context.req.headers.cookie)
+  const payload = await getJwtPayload(context.req.headers.cookie)
   return payload ? {
     props: {
       data: payload

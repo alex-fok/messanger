@@ -1,14 +1,14 @@
 import cookie from 'cookie'
 import getUser from '../db/user'
 
-const getJwtPayload = (requestCookies:string | undefined): {data: object} | undefined => {
+const getJwtPayload = async (requestCookies:string | undefined): Promise<{username: string} | undefined> => {
   if (!requestCookies) return
 
   const { jwt } = cookie.parse(requestCookies)
   if (!jwt) return
 
-  const user = getUser(jwt)
+  const user = await getUser(jwt)
   if (!user) return
-  return { data: user }
+  return user
 }
 export default getJwtPayload
