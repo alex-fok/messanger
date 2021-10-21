@@ -25,10 +25,10 @@ const createAccount = async ({username, password, nickname}: CreateAccountInput)
     ? [isUserValid, userError] 
     : validateInput({name: 'Nickname', value: byname}, ['atLeast3OrEmpty'])
 
-  const error = (!isUserValid && userError) || (!isPassValid && passError) || (!isNickValid && nickError) || ''
+  const inputValidationError = (!isUserValid && userError) || (!isPassValid && passError) || (!isNickValid && nickError) || ''
   
-  if (error.length)
-    return new Promise<CreateAccountType>((res, rej) => rej({ error }))
+  if (inputValidationError.length)
+    return new Promise<CreateAccountType>((res, rej) => rej({ error: inputValidationError }))
 
   if(await db.collection('user').findOne({username}))
     return new Promise<CreateAccountType>((res, rej) => rej({
@@ -43,7 +43,10 @@ const createAccount = async ({username, password, nickname}: CreateAccountInput)
       const {acknowledged} = await db.collection('user').insertOne({
         username,
         password: `${salt}.${derivedKey.toString('hex')}`,
-        nickname: byname })
+        nickname: byname,
+        chats: [],
+        connections: []
+      })
 
       acknowledged
         ? res({ success: 'User account created' })
