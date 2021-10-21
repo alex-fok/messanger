@@ -3,21 +3,25 @@ import mongodb from './mongodb'
 import crypto from 'crypto'
 import promisify from '../../utils/promisify'
 
-const login = async (username: string, password: string): Promise<{jwt:string,error:string}> => {
+type JwtType = {jwt: string}
+type ErrorType = {error: string}
+type LoginReturnType = JwtType | ErrorType
+
+const login = async (username: string, password: string): Promise<LoginReturnType> => {
   const client = await mongodb
-  if (!client) return { jwt:'', error:'Database not found' }
+  if (!client) return { error:'Database not found' }
 
   const db = client.db()
   const user = await db.collection('user').findOne({username: username})
-  if (!user) return { jwt: '', error: 'User not found' }
+  if (!user) return { error: 'User not found' }
 
   const [salt, encrypted] = user.password.split('.')
   
   const derivedKey = await (promisify(crypto.scrypt)(password, salt, 64).catch(() => {}) as Promise<Buffer>)
-  if (!derivedKey) return { jwt: '', error: 'Error in scrypting password' }
+  if (!derivedKey) return { error: 'Error in scrypting password' }
   
   return derivedKey.toString('hex') !== encrypted
-    ? { jwt: '', error: 'Password not match' }
-    : { jwt: await serializeToken({username}), error: '' }
+    ? { error: 'Password not match' }
+    : { jwt: await serializeToken({username}) }
 }
 export default login
