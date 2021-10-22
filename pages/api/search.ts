@@ -24,9 +24,6 @@ const search = async (req:NextApiRequest, res:NextApiResponse) => {
     const dbResult = await dbSearch(dbNameMap[type], keyword)
     return res.json(dbResult)
   }
-  res.json({
-    searchResult: [],
-    error: ''
-  })
+  res.json({searchResult: []})
 }
 export default search

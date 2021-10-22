@@ -13,7 +13,7 @@ const search = async({name, $or}:{name: string, $or: string[]}, keyword: string)
   if(!isColExisting) return {error: 'No Collection Found'}
   
   const query = {
-    $or: $or.map(category => ({[category]: {$regex: keyword}}))
+    $or: $or.map(category => ({[category]: keyword}))
   }
 
   const projection = { _id: 0, username: 1 }
