@@ -10,11 +10,10 @@ const Navbar = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
   
-  const hideModal = (type:'search' | 'logout') => (
-    {
-      'search': () => {setIsSearching(false)},
-      'logout': () => {setIsLoggingOut(false)}
-    }[type]())
+  const hideModal = (type:'search' | 'logout') => ({
+    'search': () => {setIsSearching(false)},
+    'logout': () => {setIsLoggingOut(false)}
+  }[type]())
 
   const searchUser = () => {
     searchRef.current?.blur()
@@ -37,7 +36,13 @@ const Navbar = () => {
 
   return (
     <>
-      { isSearching ? <UserLookUpModal keyword={keyword} hideContent={() => {hideModal('search')}} /> : null}
+      { isSearching 
+        ? <UserLookUpModal
+            hideContent={() => {hideModal('search')}} 
+            keyword={keyword}
+            setKeyword={setKeyword}
+          />
+        : null }
       
       <nav className='top-0 w-screen flex flex-row bg-gray-900 pr-12 md:pr-36 lg:pr-48 py-5 justify-end text-gray-400'>        
         <div className='flex flex-row p-0'>
@@ -61,7 +66,9 @@ const Navbar = () => {
             }}
           />
         </div>
-        <div className='px-3 flex items-center hover:text-gray-200'>Logout</div>
+        <div className='px-3 flex items-center hover:text-gray-200 cursor-pointer'>
+          <FontAwesomeIcon className='text-lg' icon={['fas', 'sign-out-alt']}/><span className='ml-2'>Sign Out</span>
+        </div>
       </nav>
     </>
   )
