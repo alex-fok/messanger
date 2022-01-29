@@ -1,13 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useContext, SyntheticEvent } from 'react'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
 import UserLookUpModal from './UserLookUpModal'
+import type {ContextType} from '../types/context'
+import Context from '../lib/contexts'
 
 const Navbar = () => {
-  const [keyword, setKeyword] = useState('')
-  const [isSearching, setIsSearching] = useState(false)
-  const [isSearchFocused, setSearchFocused] = useState(false)
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const {search} = useContext<ContextType>(Context)
+  const {keyword, setKeyword} = search
+  const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [isSearchFocused, setSearchFocused] = useState<boolean>(false)
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false)
   const searchRef = useRef<HTMLInputElement>(null)
   
   const hideModal = (type:'search' | 'logout') => ({
@@ -16,23 +19,33 @@ const Navbar = () => {
   }[type]())
 
   const searchUser = () => {
+    if (keyword === '') return
     searchRef.current?.blur()
     setIsSearching(true)
     setSearchFocused(false)
   }
-  useEffect(() => {
-    if (isSearchFocused) {
-      const enterKeyMap = mapKeyAndFn('Enter', searchUser)
-      const escKeyMap = mapKeyAndFn('Escape', () => {
-        searchRef.current?.blur()
+  const searchInputEvents = {
+    change: (e: React.ChangeEvent<HTMLInputElement>): void => setKeyword(e.target.value),
+    focus: (): void => setSearchFocused(true),
+    blur: (e: React.FocusEvent<HTMLInputElement>): void => {
+      if(!e.currentTarget.parentElement?.contains(e.relatedTarget as Element))
         setSearchFocused(false)
-      })
-      return () => {
-        enterKeyMap()
-        escKeyMap()
-      }
     }
-  }, [isSearchFocused])
+  }
+
+  useEffect(() => {
+    if (!isSearchFocused) return
+    const enterKeyMap = mapKeyAndFn('Enter', searchUser)
+    const escKeyMap = mapKeyAndFn('Escape', () => {
+      searchRef.current?.blur()
+      setSearchFocused(false)
+    })
+    return () => {
+      enterKeyMap()
+      escKeyMap()
+    }
+    
+  }, [isSearchFocused, keyword])
 
   return (
     <>
@@ -58,12 +71,9 @@ const Navbar = () => {
             placeholder='Search for User...'
             ref={searchRef}
             value={keyword}
-            onChange={e=> setKeyword(e.target.value)}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={e => {
-              if(!e.currentTarget.parentElement?.contains(e.relatedTarget as Element))
-                setSearchFocused(false)
-            }}
+            onChange={searchInputEvents.change}
+            onFocus={searchInputEvents.focus}
+            onBlur={searchInputEvents.blur}
           />
         </div>
         <div className='px-3 flex items-center hover:text-gray-200 cursor-pointer'>
