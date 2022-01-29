@@ -1,9 +1,8 @@
 const mapKeyAndFn = (key: string, fn: () => void) => {
   const handler:EventListener = (event: Event) : void => {
-    const e = event as KeyboardEvent
-    if (e.code === key) fn()
+    if ((event as KeyboardEvent).code === key) fn()
   }
-  document.addEventListener('keydown', handler)
+  document.addEventListener<'keydown'>('keydown', handler)
   return () => document.removeEventListener('keydown', handler) 
 }
 export default mapKeyAndFn
