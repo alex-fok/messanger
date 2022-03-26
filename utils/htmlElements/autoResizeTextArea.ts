@@ -5,7 +5,7 @@ const autoResizeTextArea = (textArea: HTMLTextAreaElement) => {
   
   textArea.style.height = lineHeight + offset + 'px'
   
-  const heightLimit: number = lineHeight * 3 + offset;
+  const heightLimit: number = lineHeight * 3 + offset
   const scrollHeight: number = textArea.scrollHeight + offset
 
   if (scrollHeight > heightLimit)

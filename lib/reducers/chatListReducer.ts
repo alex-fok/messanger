@@ -2,6 +2,7 @@ import type { ChatListType, ChatListActionType } from "../../types/context"
 import {cloneDeep} from 'lodash'
 
 const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatListType => {
+  console.log('action:', action)
   switch(action.type) {
     case 'incomingMsg': {
       const notified = Object.assign({}, state.items[action.notified], {notification: true})
@@ -10,10 +11,10 @@ const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatLi
     }
     case 'newChat': {
       const newList = Object.assign(cloneDeep(state.items), {[action.chatId]: {name: action.name, notification: false}})
-      return Object.assign(cloneDeep(state), {list: newList})
+      return Object.assign(cloneDeep(state), {items: newList})
     }
     case 'setActive': {
-      return Object.assign(cloneDeep(state), {active: action.chatId})
+      return Object.assign(cloneDeep(state), {selected: action.chatId})
     }
     default:
       return state

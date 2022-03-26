@@ -26,7 +26,7 @@ const SideNav:FC<SideNavProps> = ({chatList, setActiveChat}) => {
                 className={chatList.selected === id ? chatListActiveClasses : chatListClasses}
                 key={id}
                 onClick={() => {setActiveChat(id)}}
-              >{properties.name}
+              >{properties.name.length < 16 ? properties.name : properties.name.slice(0, 16) + '...'}
               </li>
             )
           })
