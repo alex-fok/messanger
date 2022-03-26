@@ -9,7 +9,7 @@ export type MessageType = {
   sender: {
     displayName: string,
   },
-  time: Date | undefined,
+  timestamp: number | undefined,
   message: string
 }
 
@@ -17,7 +17,8 @@ export type ActiveChatType = {
   id: string,
   name: string,
   history: MessageType[],
-  participants: string[]
+  participants: string[],
+  tmpId?: string
 }
 
 export type ChatActionType = {
@@ -28,8 +29,15 @@ export type ChatActionType = {
   type: 'addChat',
   participants: string[]
 } | {
+  type: 'createMsg',
+  chatId: string,
+  index: number,
+  timestamp: number
+} | {
   type: 'createChat',
-  chatId: string
+  chatId: string,
+  tmpId: string,
+  timestamp: number
 }
 
 export type ChatListType = {

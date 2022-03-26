@@ -1,6 +1,6 @@
-const promisify = (fn:(...promiseArgs: any[])=>void) => 
+const promisify = <Type>(fn:(...promiseArgs: any[])=>void) => 
   (...args:any[]) =>
-    new Promise((res, rej) => {
+    new Promise<Type>((res, rej) => {
       fn(...args, (err: Error, result: any) => {
         if (err) return rej(err)
         return res(result)

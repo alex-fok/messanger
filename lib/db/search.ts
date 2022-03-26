@@ -1,4 +1,4 @@
-import mongodb from './mongodb'
+import connectToDB from './mongodb'
 import type {Document} from 'mongodb'
 
 type SearchResultType = { searchResult: Document[] }
@@ -6,7 +6,7 @@ type ErrorType = { error: string }
 type SearchReturnType = SearchResultType | ErrorType
 
 const search = async({name, $or}:{name: string, $or: string[]}, keyword: string) : Promise<SearchReturnType> => {
-  const client = await mongodb
+  const client = await connectToDB()
   const db = client.db()
 
   const isColExisting = db.listCollections({name})
