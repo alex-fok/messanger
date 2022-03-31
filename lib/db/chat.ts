@@ -58,14 +58,14 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
     {_id: {$in: participantIds}},
     { $set: {
       'lastModified': timestamp,
-      [`chats.${insertedId}`]: {unread: 1}
+      [`chats.${insertedId}`]: {name: insertedId.toString(), unread: 1}
     }}
   )
   const updateSender = userCollection.updateOne(
     {_id: requesterId},
     { $set: {
       'lastModified' : timestamp,
-      [`chats.${insertedId}`]: {unread: 0}
+      [`chats.${insertedId}`]: {name: insertedId.toString(), unread: 0}
     }}
   )
   const [pResult, sResult] = await Promise.all([updateParticipants, updateSender])

@@ -1,6 +1,7 @@
 import {ObjectId} from 'mongodb'
 
 export type ChatsType = {
+  name:string,
   unread: number
 }
 

@@ -46,9 +46,8 @@ const setup = (io: Server) => {
       if (!chatResult) return socket.emit('error', 'Unable to create chat')
       copy.forEach(p => {
         const pString = p.toString()
-        pString === user._id
-          ? socket.to(`user_${pString}`).emit('newChat', chatResult.chatId, 'name')
-          : io.to(`user_${pString}`).emit('newChat', chatResult.chatId, 'name')
+        const emitter = pString === user._id ? socket : io
+        emitter.to(`user_${pString}`).emit('newChat', chatResult.chatId, chatResult.chatId.toString())
       })
       const chatName = `chat_${chatResult.chatId.toString()}`
       socket.join(chatName)

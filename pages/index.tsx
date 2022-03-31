@@ -13,7 +13,7 @@ import { cloneDeep } from 'lodash'
 
 type ChatsType = {
   unread: number,
-  name?: string
+  name: string
 }
 type PayloadType = {
   username: string,
@@ -62,12 +62,8 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
     history: [],
     participants: []
   })
-  const chatListCopy = cloneDeep(data.chats)
-  for (const chat in chatListCopy) {
-    chatListCopy[chat].name = chat
-  }
   const [chatList, dispatchChatList] = useReducer(chatListReducer, {
-    items: {...{'-1': {name: 'untitled', notification: false}}, ...chatListCopy},
+    items: Object.keys(data.chats).length === 0 ? {'-1': {name: 'untitled', unread: 0}} : data.chats,
     selected: '-1'
   })
   const defaultValue = {

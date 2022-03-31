@@ -41,7 +41,7 @@ export type ChatActionType = {
 }
 
 export type ChatListType = {
-  items: Record<string, {name: string, notification: boolean}>
+  items: Record<string, {name: string, unread: number}>
   selected: string
 }
 
