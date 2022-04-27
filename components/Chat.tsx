@@ -16,7 +16,7 @@ const printTime = (timestamp:number):string => {
 const Chat:ChatFC = ({chat, addMessage, createChat}) => {
   const [message, setMessage] = useState<string>('')
   const sendMessage = () => {
-    chat.id === '-1' ? createChat(message) : addMessage(message)
+    chat.history.length === 0 ? createChat(message) : addMessage(message)
     setMessage('')
   }
 
@@ -35,7 +35,7 @@ const Chat:ChatFC = ({chat, addMessage, createChat}) => {
               className='py-2 mb-3'
               key={i}
             >
-              <p className='mb-3'>{msgObj.sender.displayName} <span className='text-xs font-thin'>{msgObj.timestamp ? printTime(msgObj.timestamp) : 'Sending...'}:</span></p>
+              <p className='mb-3'>{msgObj.sender} <span className='text-xs font-thin'>{msgObj.timestamp ? printTime(msgObj.timestamp) : 'Sending...'}:</span></p>
               <p className='rounded-md border border-gray-400 inline-block py-2 px-4'>
                 <span>{msgObj.message}</span>
               </p>

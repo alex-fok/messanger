@@ -6,22 +6,21 @@ export type SearchType = {
 }
 
 export type MessageType = {
-  sender: {
-    displayName: string,
-  },
+  sender: string,
   timestamp: number | undefined,
   message: string
 }
 
 export type ActiveChatType = {
   id: string,
-  name: string,
   history: MessageType[],
-  participants: string[],
   tmpId?: string
 }
 
 export type ChatActionType = {
+  type: 'switchActive',
+  chatId: string
+} | {
   type: 'addMsg',
   message: string,
   user: string
@@ -38,6 +37,17 @@ export type ChatActionType = {
   chatId: string,
   tmpId: string,
   timestamp: number
+} | {
+  type: 'addParticipants',
+  chatId: string
+} | {
+  type: 'renewChat',
+  chatId: string,
+  history: MessageType[]
+} | {
+  type: 'newMsg',
+  chatId: string,
+  message: string
 }
 
 export type ChatListType = {
@@ -55,6 +65,11 @@ export type ChatListActionType = {
 } | {
   type: 'setActive',
   chatId: string
+} | {
+  type: 'rename',
+  tmpId: string,
+  chatId: string,
+  name: string
 }
 
 export type UserType = {

@@ -48,7 +48,7 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   const participantIds: ObjectId[] =
     (await userCollection.find({username: {$in: participants}}).toArray()).map(user => user._id)
     
-  // if (!participantIds.includes(requesterId)) participantIds.push(requesterId)
+  if (!participantIds.includes(requesterId)) participantIds.push(requesterId)
   const timestamp = Date.now()
   const {insertedId} = await db.collection('chat').insertOne(
     new Chat(participantIds, [{timestamp,sender: requesterId, message}])
@@ -80,7 +80,7 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   }
 }
 
-const get = async(chatId:ObjectId, userId:ObjectId) => {
+const get = async(chatId:ObjectId, userId:ObjectId):Promise<MessageType[]> => {
   const client = await connectToDB()
   if (!client) throw new Error('Chat - Get: Database not found')
   
@@ -91,7 +91,9 @@ const get = async(chatId:ObjectId, userId:ObjectId) => {
   const chat = await chatCollection.findOne({_id: chatId})
 
   if (!chat) throw new Error('Chat - Get: No chat found')
-  if(!chat.participants.includes(userId)) throw new Error ('Chat - Get: User not included')
+  const uIdString = userId.toString() 
+  const cmp = chat.participants.find(p => p.toString() === uIdString)
+  if(cmp === undefined) throw new Error ('Chat - Get: User not included')
 
   const displayNames:Record<string, string> = {}
   

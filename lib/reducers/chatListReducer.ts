@@ -10,11 +10,16 @@ const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatLi
       return Object.assign(cloneDeep(state), {list: newList})
     }
     case 'newChat': {
-      const newList = Object.assign(cloneDeep(state.items), {[action.chatId]: {name: action.name, notification: false}})
-      return Object.assign(cloneDeep(state), {items: newList})
+      const newList = Object.assign(cloneDeep(state.items), {[action.chatId]: {name: action.name, unread: 1}})
+      return Object.assign({selected: state.selected}, {items: newList})
     }
     case 'setActive': {
       return Object.assign(cloneDeep(state), {selected: action.chatId})
+    }
+    case 'rename': {
+      const newList = Object.assign(cloneDeep(state.items), {[action.chatId]: {name: action.name, unread: 0}})
+      delete newList[action.tmpId]
+      return Object.assign({selected: state.selected === action.tmpId ? action.chatId : state.selected}, {items: newList})
     }
     default:
       return state

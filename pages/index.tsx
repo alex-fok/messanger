@@ -1,4 +1,5 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import type {MessageType} from '../types/context'
 import React, { FC, useMemo, useReducer, useState } from 'react'
 
 import Layout from '../components/Layout'
@@ -9,7 +10,6 @@ import Context from '../lib/contexts'
 import {activeChatReducer, chatListReducer} from '../lib/reducers'
 import useSocket, {createSocket} from '../lib/hooks/useSocket'
 import dbUser from '../lib/db/user'
-import { cloneDeep } from 'lodash'
 
 type ChatsType = {
   unread: number,
@@ -50,21 +50,18 @@ export async function getServerSideProps(context:GetServerSidePropsContext):Prom
     }
   }
 }
-
+let random = Date.now().toString()
 const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}) => {
   console.log(data)
   const jwt = useMemo(() => data.jwt, [data])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [activeChat, dispatchActiveChat] = useReducer(activeChatReducer, {
-    id: '-1',
-    tmpId: `${data.username}_${Date.now()}`,
-    name: 'untitled',
-    history: [],
-    participants: []
+    id: data.username + '_' + random,
+    history: []
   })
   const [chatList, dispatchChatList] = useReducer(chatListReducer, {
-    items: Object.keys(data.chats).length === 0 ? {'-1': {name: 'untitled', unread: 0}} : data.chats,
-    selected: '-1'
+    items: {...{[data.username + '_' + random]: {name: '(new)', unread: 0}}, ...data.chats},
+    selected: data.username + '_' + random
   })
   const defaultValue = {
     user: {
@@ -80,11 +77,11 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
       list: chatList
     }
   }
-  const setActiveChat = (id:string) => dispatchChatList({type: 'setActive', chatId: id})
-  
   const socket = useMemo(() => createSocket(jwt), [jwt])
   useSocket('createChatResponse', (tmpId:string, chatId:string, timestamp:number) => {
+    dispatchChatList({type: 'rename', tmpId, chatId, name: chatId})
     dispatchActiveChat({type: 'createChat', tmpId, chatId, timestamp})
+    random = Date.now().toString()
   })
   useSocket('messageResponse', (index:number, chatId:string, timestamp:number) => {
     dispatchActiveChat({type:'createMsg', index, chatId, timestamp})
@@ -92,15 +89,26 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
   useSocket('newChat', (chatId:string, name:string) => {
     dispatchChatList({type:'newChat', chatId, name})
   })
+  useSocket('newMessage', (chatId:string, message:string) => {
+    dispatchActiveChat({type:'newMsg', chatId, message})
+  })
+  useSocket('getChatResponse', (chatId: string, history:MessageType[]) => {
+    if (!history.length) return
+    dispatchActiveChat({type:'renewChat', chatId, history})
+  })
+ const setActiveChat = (chatId:string) => {
+    dispatchChatList({type: 'setActive', chatId})
+    dispatchActiveChat({type: 'switchActive', chatId})
+    socket.emit('getChat', chatId)
+  }
   const addMsg = (message: string) => {
-    const length = activeChat.history.length
     dispatchActiveChat({type: 'addMsg', user: data.username, message})
-    socket.emit('message', length, activeChat.id, message)
+    socket.emit('message', activeChat.history.length, activeChat.id, message)
   }
   
   const createChat = (message:string) => {
     dispatchActiveChat({type: 'addMsg', user:data.username, message})
-    socket.emit('createChat', activeChat.tmpId, [], message)
+    socket.emit('createChat', activeChat.id, [], message)
   }
   return (
     <Context.Provider value={defaultValue}>

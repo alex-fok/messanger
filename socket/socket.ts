@@ -54,7 +54,7 @@ const setup = (io: Server) => {
       socket.emit('createChatResponse', tmpId, chatResult.chatId, chatResult.timestamp)
     })
 
-    socket.on('message', async(index, chatId, message) => {
+    socket.on('message', async(index:number, chatId:string, message:string) => {
       const timestamp = Date.now()
       const messageInfo = await Chat.addMessage(new ObjectId(user._id), new ObjectId(chatId), message).catch(err => {console.error(err)})
       if (!messageInfo) return socket.emit('error', 'Unable to create message')
@@ -62,11 +62,11 @@ const setup = (io: Server) => {
       socket.emit('messageResponse', index, chatId, timestamp)
     })
 
-    socket.on('getChat', async({chatId, joining}: LoadChat) => {
+    socket.on('getChat', async(chatId:string) => {
+      console.log('getChat: ', chatId)
       const result = await Chat.get(new ObjectId(chatId), new ObjectId(user._id)).catch(err => {console.error(err)})
       if (!result) return socket.emit('error', 'Unable to get chat')
-      if (joining) socket.join(`chat_${chatId}`)
-      socket.emit(`chatHistory_${chatId}`, result)
+      socket.emit('getChatResponse', chatId, result)
     })
   })
 }
