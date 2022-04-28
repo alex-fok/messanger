@@ -1,13 +1,23 @@
 import { FC } from 'react'
 import type { ChatListType } from '../types/context'
 
-type SideNavProps = { chatList: ChatListType, setActiveChat: (id:string) => void }
+type SideNavProps = { chatList: ChatListType, setActiveChat: (id:string) => void, deleteChat: (id:string) => void}
 
 const itemClasses = 'text-gray-400 mb-5 hover:text-gray-800 cursor-pointer'
-const chatListClasses = 'rounded-sm text-gray-600 text-sm px-2 py-1 mb-0 cursor-pointer hover:bg-gray-300'
-const chatListActiveClasses = 'rounded-sm text-gray-600 text-sm px-2 py-1 mb-0 cursor-pointer bg-gray-300'
+const chatListClasses = 'flex flex-row rounded-sm text-gray-600 text-sm px-2 py-1 mb-0 cursor-pointer hover:bg-gray-300'
+const chatListActiveClasses = 'flex flex-row rounded-sm text-gray-600 text-sm px-2 py-1 mb-0 cursor-pointer bg-gray-300'
 
-const SideNav:FC<SideNavProps> = ({chatList, setActiveChat}) => {
+const SideNav:FC<SideNavProps> = ({chatList, setActiveChat, deleteChat}) => {
+  let _deleting:string
+  
+  const handleSetActive = (id:string) => {
+    if (_deleting !== id) setActiveChat(id)
+  }
+  const handleDelete = (id:string) => {
+    deleteChat(id)
+    _deleting = id
+  } 
+
   return (
     <nav className='w-44 ml-4 lg:ml-12 px-2 h-full'>
     <ul className='mt-12  text-xl font-semibold'>
@@ -23,8 +33,16 @@ const SideNav:FC<SideNavProps> = ({chatList, setActiveChat}) => {
             <li
               className={chatList.selected === id ? chatListActiveClasses : chatListClasses}
               key={id}
-              onClick={() => {setActiveChat(id)}}
-            >{properties.name.length < 16 ? properties.name : properties.name.slice(0, 16) + '...'}
+              onClick={() => handleSetActive(id) }
+            >
+              <span className='flex-auto'>
+                {properties.name.length < 16 ? properties.name : properties.name.slice(0, 16) + '...'}
+              </span>
+              <span
+                className='flex-none hover:text-gray-200'
+                onClick={() => handleDelete(id)}
+              >&#x2716;
+              </span>
             </li>
           )
         }

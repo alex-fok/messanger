@@ -101,6 +101,9 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
     dispatchActiveChat({type: 'switchActive', chatId})
     socket.emit('getChat', chatId)
   }
+  const deleteChat = (chatId:string) => {
+    dispatchChatList({type: 'deleteChat', chatId})
+  }
   const addMsg = (message: string) => {
     dispatchActiveChat({type: 'addMsg', user: data.username, message})
     socket.emit('message', activeChat.history.length, activeChat.id, message)
@@ -117,6 +120,7 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
           <SideNav
             chatList={defaultValue.chat.list}
             setActiveChat={setActiveChat}
+            deleteChat={deleteChat}
           />
          <Chat
             chat={defaultValue.chat.active}

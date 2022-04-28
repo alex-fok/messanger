@@ -63,6 +63,9 @@ export type ChatListActionType = {
   name: string,
   chatId: string
 } | {
+  type: 'deleteChat',
+  chatId: string
+} | {
   type: 'setActive',
   chatId: string
 } | {
