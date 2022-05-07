@@ -1,17 +1,13 @@
 import { JwtPayload } from 'jsonwebtoken'
-import { Collection, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import User from './models/user'
-import connectToDB from './mongodb'
 import verifyToken from '../authentication/verifyToken'
-import Chat from './models/chat'
 import promisify from '../../utils/promisify'
+import { getUserCollection, getChatCollection } from './connection'
 
 const create = async (username:string, password:string, nickname:string):Promise<string> => {
-  const client = await connectToDB()
-  if (!client) throw new Error('Database not found')
-
-  const userCollection = client.db().collection('user') as Collection<User>
+  const userCollection = await getUserCollection()
   if(await userCollection.findOne({username})) throw new Error('Username already existed')
 
   const salt = crypto.randomBytes(8).toString('hex')
@@ -35,13 +31,11 @@ const verify = async (jwt: string):Promise<string | null>=> {
 }
 
 const get = async (username: string) => {
-  const client = await connectToDB()
-  const userCollection = client.db().collection('user') as Collection<User>
-
+  const userCollection = await getUserCollection()    
   const user = await userCollection.findOne({username}).catch(err => {console.error(err)})
 
   return user ? {
-    _id:user._id.toString(),
+    id:user._id.toString(),
     username: user.username,
     chats: user.chats || {}
   } : null
@@ -53,20 +47,14 @@ const getWithJwt = async (jwt: string) => {
   return result
 }
 const search = async(username:string) => {
-  const client = await connectToDB()
-  if (!client) throw new Error('User - Search: Database not found')
-  
-  const userCollection = client.db().collection('user') as Collection<User>
+  const userCollection = await getUserCollection()  
   const result = await userCollection.findOne({username})
 
   return result
 }
 
 const getChats = async (username:string) => {
-  const client = await connectToDB()
-  const chatCollection = client.db().collection('chat') as Collection<Chat>
-  const userCollection = client.db().collection('user') as Collection<User>
-
+  const [userCollection, chatCollection] = await Promise.all([getUserCollection(), getChatCollection()])
   const user = await userCollection.findOne({username})
   const chatArray = await chatCollection.find({
     '_id': { $in: Object.keys(user?.chats || []).map(key => new ObjectId(key))}

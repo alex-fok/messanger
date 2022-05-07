@@ -12,13 +12,11 @@ export default createContext<ContextType>({
   chat: {
     active: {
       id: '-1',
-      name: 'untitiled',
       history: [],
-      participants: []
     },
     dispatchActive: () => {},
     list:{
-      items: {},
+      items: new Map(),
       selected: ''
     }
   }

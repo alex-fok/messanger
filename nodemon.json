@@ -1,6 +1,6 @@
 {
   "ignore": ["node_modules", ".next"],
-  "watch": ["server", "socket"],
+  "watch": ["server", "socket", "lib/db"],
   "exec": "ts-node --project tsconfig.server.json server/index.ts",
   "ext": "js ts",
   "env":{

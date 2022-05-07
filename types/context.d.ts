@@ -51,7 +51,7 @@ export type ChatActionType = {
 }
 
 export type ChatListType = {
-  items: Record<string, {name: string, unread: number}>
+  items: Map<string, {name: string, unread: number}>
   selected: string
 }
 
@@ -73,6 +73,9 @@ export type ChatListActionType = {
   tmpId: string,
   chatId: string,
   name: string
+} | {
+  type: 'addTempChat',
+  tmpId: string
 }
 
 export type UserType = {

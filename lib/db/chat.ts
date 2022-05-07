@@ -1,8 +1,8 @@
-import connectToDB from './mongodb'
-import { Collection, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import Chat from './models/chat'
 import User from './models/user'
 import { MessageType } from '../../types/context'
+import { getUserCollection, getChatCollection} from './connection'
 
 type CreateChatType =  {
   timestamp: number,
@@ -11,16 +11,12 @@ type CreateChatType =  {
 }
 
 const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
-  const client = await connectToDB()
-  if (!client) throw new Error('Chat - Add Message: Database not found')
-    const db = client.db()
-    const chatCollection = db.collection('chat') as Collection<Chat>
-    const userCollection = db.collection('user') as Collection<User>
-    const timestamp = Date.now() 
-
+   const timestamp = Date.now() 
+    const userCollection = await getUserCollection()
     const senderInfo = await userCollection.findOne({_id: sender})
     if (!senderInfo) throw new Error('Chat - Add Message: Sender not found')
 
+    const chatCollection = await getChatCollection()
     const {value} = await chatCollection.findOneAndUpdate(
       {_id:chatId}, 
       {$push: {'history': { timestamp, sender, message }}
@@ -39,18 +35,14 @@ const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
 }
 
 const create = async(requesterId: ObjectId, participants: string[], message: string) : Promise<CreateChatType> => {
-  const client = await connectToDB()
-  if (!client) throw new Error('Chat - Create: Database not found')
-
-  const db = client.db()
-  const userCollection = db.collection('user') as Collection<User>
-
+  const userCollection = await getUserCollection()
   const participantIds: ObjectId[] =
     (await userCollection.find({username: {$in: participants}}).toArray()).map(user => user._id)
-    
+  
+  const chatCollection = await getChatCollection()
   if (!participantIds.includes(requesterId)) participantIds.push(requesterId)
   const timestamp = Date.now()
-  const {insertedId} = await db.collection('chat').insertOne(
+  const {insertedId} = await chatCollection.insertOne(
     new Chat(participantIds, [{timestamp,sender: requesterId, message}])
   )
   // Add chat reference for participants
@@ -81,22 +73,16 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
 }
 
 const get = async(chatId:ObjectId, userId:ObjectId):Promise<MessageType[]> => {
-  const client = await connectToDB()
-  if (!client) throw new Error('Chat - Get: Database not found')
-  
-  const db = client.db()
-  const chatCollection = db.collection('chat') as Collection<Chat>
-  const userCollection = db.collection('user') as Collection<User>
-  
+  const chatCollection = await getChatCollection()
   const chat = await chatCollection.findOne({_id: chatId})
 
   if (!chat) throw new Error('Chat - Get: No chat found')
-  const uIdString = userId.toString() 
-  const cmp = chat.participants.find(p => p.toString() === uIdString)
+  const cmp = chat.participants.find(p => p.equals(userId))
   if(cmp === undefined) throw new Error ('Chat - Get: User not included')
 
   const displayNames:Record<string, string> = {}
-  
+ 
+  const userCollection = await getUserCollection()
   const participants = await userCollection.find({_id: {$in: chat.participants}}).toArray()  
   participants.forEach((u:User) => {
     displayNames[u._id.toString()] = u.nickname
@@ -108,9 +94,58 @@ const get = async(chatId:ObjectId, userId:ObjectId):Promise<MessageType[]> => {
       timestamp: h.timestamp
   }))
 }
+const removeUser = async (chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean}> => {
+  const [chatCollection, userCollection] = await Promise.all([getChatCollection(), getUserCollection()])
+  const [userCond, chatCond] = [{_id: userId}, {_id: chatId}]
+  const [chat, user] = await Promise.all([chatCollection.findOne(chatCond), userCollection.findOne(userCond)])
+
+  if (!chat || !user) throw new Error('Chat - RemoveUser: Chat or User not found')
+  
+  const index = chat.participants.findIndex(p => p.equals(userId))
+  if(index === -1) throw new Error ('Chat - RemoveUser: User not included')
+
+  delete user.chats[chatId.toString()]
+  chat.participants = [
+    ...chat.participants.slice(0,index),
+    ...chat.participants.slice(index + 1, chat.participants.length)
+  ]
+  const [{acknowledged: ack1}, {acknowledged : ack2}] = await Promise.all([
+    userCollection.updateOne(userCond, {$set: {chats: user.chats}}),
+    chatCollection.updateOne(chatCond, {$set: {participants: chat.participants}})
+  ])
+  return ({
+    acknowledged: ack1 && ack2
+  })
+}
+const removeChat = async (chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean, chatId: ObjectId, participants: ObjectId[]}> => {
+  const [chatCollection, userCollection] = await Promise.all([getChatCollection(), getUserCollection()])
+  const [userCond, chatCond] = [{_id: userId}, {_id: chatId}]
+  const [chat, user] = await Promise.all([chatCollection.findOne(chatCond), userCollection.findOne(userCond)])
+
+  if (!chat || !user) throw new Error('Chat - RemoveUser: Chat or User not found')
+  
+  const index = chat.participants.findIndex(p => p.equals(userId))
+  if(index === -1) throw new Error ('Chat - RemoveChat: User not included') 
+
+  const userUpdate = userCollection.updateMany(
+    { _id: {$in: chat.participants }},
+    { $unset: {[`chats.${chatId}`] : '' }
+  })
+
+  const chatUpdate = chatCollection.deleteOne({_id: chatId})
+  const [{acknowledged: ack1}, {acknowledged: ack2}] = await Promise.all([userUpdate, chatUpdate])
+  return ({
+    acknowledged: ack1 && ack2,
+    chatId: chat._id,
+    participants: chat.participants
+  })
+}
+
 const chat = {
   addMessage,
   create,
-  get
+  get,
+  removeUser,
+  removeChat
 }
 export default chat
