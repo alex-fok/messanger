@@ -94,11 +94,12 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
   })
   useSocket('chatRemoved', (chatId:string) => {
     dispatchChatList({type: 'deleteChat', chatId})
+    dispatchActiveChat({type: 'deselect', chatId})
   })
   useSocket('newChat', (chatId:string, name:string) => {
     dispatchChatList({type:'newChat', chatId, name})
   })
-  useSocket('newMessage', (chatId:string, message:string) => {
+  useSocket('newMessage', (chatId:string, message:MessageType) => {
     dispatchActiveChat({type:'newMsg', chatId, message})
   })
   useSocket('getChatResponse', (chatId: string, history:MessageType[]) => {
@@ -116,16 +117,17 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
   }
   const deleteChat = (chatId:string) => {
     dispatchChatList({type: 'deleteChat', chatId})
+    dispatchActiveChat({type: 'deselect', chatId})
     socket.emit('removeChat', chatId)
   }
-  const addChat = () => {
+  const addChatToList = () => {
     dispatchChatList({type: 'addTempChat', tmpId: random})
-    dispatchActiveChat({type: 'switchActive', chatId:random})
+    dispatchActiveChat({type: 'switchActive', chatId: random})
     renewRandom()
   }
   const addMsg = (message: string) => {
     dispatchActiveChat({type: 'addMsg', user: data.username, message})
-    socket.emit('message', activeChat.history.length, activeChat.id, message)
+    socket.emit('message', activeChat.history.length - 1, activeChat.id, message)
   }
   
   const createChat = (message:string) => {
@@ -140,7 +142,7 @@ const Home: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({data}
             chatList={defaultValue.chat.list}
             setActiveChat={setActiveChat}
             deleteChat={deleteChat}
-            addChat={addChat}
+            addChat={addChatToList}
           />
          <Chat
             chat={defaultValue.chat.active}

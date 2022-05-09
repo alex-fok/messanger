@@ -1,44 +1,60 @@
-import {cloneDeep} from 'lodash'
 import type { ActiveChatType, ChatActionType } from '../../types/context'
 
 const activeChatReducer = (state: ActiveChatType, action: ChatActionType):ActiveChatType => {
   console.log('action:', action)
   switch(action.type) {
     case 'switchActive': { 
-      return ({
+      return {
         id: action.chatId,
         history: [/*Loading Chat*/]
-      })
+      }
     }
     case 'addMsg': {
-      const newActive = cloneDeep(state)
-      newActive.history.push({
+      const copy = state.history.slice()
+      copy.push({
         sender: action.user,
         timestamp: undefined,
         message: action.message
       })
-      return newActive
+      return {
+        id:state.id,
+        history: copy
+      }
     }
     case 'createMsg': {
       if (state.id !== action.chatId) return state
-      const copy = cloneDeep(state)     
-      copy.history[action.index].timestamp = action.timestamp
-      return copy
+      state.history[action.index].timestamp = action.timestamp
+      return {...state}
     }
     case 'createChat': {
       if (state.id !== action.tmpId) return state
-      const copy = cloneDeep(state)
-      copy.history[0].timestamp = action.timestamp
-      copy.id = action.chatId
-      delete copy.tmpId
-      return copy
+      state.history[0].timestamp = action.timestamp
+      state.id = action.chatId
+      delete state.tmpId
+      return {...state}
     }
     case 'renewChat': {
       if (state.id !== action.chatId) return state
-      return ({
+      return {
         id: action.chatId,
         history: action.history
-      })
+      }
+    }
+    case 'deselect': {
+      if (state.id !== action.chatId) return state
+      return {
+        id: '',
+        history: []
+      }
+    }
+    case 'newMsg': {
+      if (state.id !== action.chatId) return state
+      const copy = state.history.slice()
+      copy.push(action.message)
+      return {
+        id: state.id,
+        history: copy
+      }
     }
     default:
       return state

@@ -12,15 +12,15 @@ const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatLi
     }
     case 'newChat': {
       state.items.set(action.chatId, {name: action.name, unread: 1})
-      return state
+      return {...state}
     }
     case 'setActive': {
-      return Object.assign(state, {selected: action.chatId})
+      state.selected = action.chatId
+      return {...state}
     }
     case 'deleteChat': {
       if (state.selected === action.chatId) state.selected = ''
       state.items.delete(action.chatId)
-      console.log(state)
       return {...state}
     }
     case 'rename': {

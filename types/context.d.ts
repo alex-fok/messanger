@@ -47,7 +47,10 @@ export type ChatActionType = {
 } | {
   type: 'newMsg',
   chatId: string,
-  message: string
+  message: MessageType
+} | {
+  type: 'deselect',
+  chatId: string
 }
 
 export type ChatListType = {
