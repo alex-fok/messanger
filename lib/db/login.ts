@@ -1,4 +1,4 @@
-import serializeToken from '../authentication/serializeToken'
+import serializeToken from '../auth/serializeToken'
 import connectToDB from './mongodb'
 import crypto from 'crypto'
 import promisify from '../../utils/promisify'
@@ -15,7 +15,9 @@ const login = async (username: string, password: string):Promise<{jwt:string}> =
 
   const [salt, encrypted] = user.password.split('.')
   
-  const derivedKey = await (promisify<Buffer>(crypto.scrypt)(password, salt, 64).catch(err => {throw Error('Error in scrypting password')}))
+  const derivedKey = 
+    await (promisify<Buffer>(crypto.scrypt)(password, salt, 64)
+      .catch(_ => {throw Error('Error in scrypting password')}))
 
   if (derivedKey.toString('hex') !== encrypted) throw new Error('Password not match')
   return { jwt: await serializeToken({username}) }

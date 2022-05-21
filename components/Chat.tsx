@@ -1,19 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC, FormEventHandler, useState } from 'react'
 import autoResizeTextArea from '../utils/htmlElements/autoResizeTextArea'
-import type { ActiveChatType } from '../types/context'
-import type {MessageType} from '../types/context'
-type ChatFC = FC<{
-  chat:ActiveChatType,
-  addMessage: (message:string)=>void,
-  createChat: (message:string)=>void
-}>
+import type { UserInputAreaFC, ChatFC } from '../types/components/chat'
+import type { Message } from '../types/global'
 
-type UserInputAreaFC = FC<{
-  userInputHandler: FormEventHandler<HTMLTextAreaElement>
-  message: string,
-  sendMessage: () => void
-}>
 
 const printTime = (timestamp:number):string => {
   const dateString = new Date(timestamp).toJSON()
@@ -39,7 +29,7 @@ const UserInputArea:UserInputAreaFC = ({userInputHandler, message, sendMessage})
   )
 }
 
-const ChatOptions:FC = () => {
+const ChatOptions = () => {
   return (
     <div className='flex flex-row text-gray-400'>
       <button className='rounded-sm px-2 py-1 hover:bg-gray-200'>File</button> 
@@ -49,7 +39,7 @@ const ChatOptions:FC = () => {
   )
 }
 
-const ChatHistory:FC<{history: MessageType[]}> = ({history}) => {
+const ChatHistory:FC<{history: Message[]}> = ({history}) => {
   return (
     <ul className='rounded-md border-2 border-gray-300 h-full focus:outline-none px-4 py-4 overflow-hidden overflow-y-scroll'>
       {history.map((msgObj, i) => {

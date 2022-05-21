@@ -2,7 +2,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import User from './models/user'
-import verifyToken from '../authentication/verifyToken'
+import verifyToken from '../auth/verifyToken'
 import promisify from '../../utils/promisify'
 import { getUserCollection, getChatCollection } from './connection'
 

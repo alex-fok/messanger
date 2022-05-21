@@ -1,4 +1,4 @@
-import type { ActiveChatType, ChatActionType } from '../../types/context'
+import type { ActiveChatType, ChatActionType } from '../types/contexts'
 
 const activeChatReducer = (state: ActiveChatType, action: ChatActionType):ActiveChatType => {
   console.log('action:', action)

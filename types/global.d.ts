@@ -1,5 +1,5 @@
-import { MongoClient } from 'mongodb'
-
-export declare global {
-  var _mongoClientPromise: Promise<MongoClient>
+export type Message = {
+  sender: string,
+  timestamp: number | undefined,
+  message: string
 }

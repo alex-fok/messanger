@@ -3,19 +3,8 @@ import axios from 'axios'
 import { FC, useEffect, useReducer, useRef, useState, useContext } from 'react'
 import { cloneDeep } from 'lodash'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
-import type {ContextType} from '../types/context'
-import Context from '../lib/contexts'
-
-type UserListEl = {
-  username: string,
-  added: boolean
-}
-
-type UserLookUpModalPropType = {
-  hideContent: () => void,
-  keyword: string,
-  setKeyword: (str: string) => void
-}
+import Context from '../contexts/app'
+import type { UserListEl, ContextType, UserLookUpPropType } from '../types/components/userLookup'
 
 type ActionType = {type:'set', value:UserListEl[]} | {type:'add' | 'remove', index:number}
 
@@ -37,7 +26,7 @@ const usersFoundReducer = (state:UsersFoundState, action:ActionType):UsersFoundS
   return copy
 }
 
-const UserLookUpModal:FC<UserLookUpModalPropType> = ({hideContent, keyword, setKeyword}) => {
+const UserLookUpModal:FC<UserLookUpPropType> = ({hideContent, keyword, setKeyword}) => {
   const {chat} = useContext<ContextType>(Context)
   const {dispatchActive : dispatchActiveChat} = chat
   const [input, setInput] = useState<string>(keyword)

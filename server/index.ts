@@ -3,7 +3,7 @@ import { createServer } from 'http'
 import next from 'next'
 import { parse } from 'url'
 import { Server } from 'socket.io'
-import setupIO from '../socket'
+import socket from '../socket/server'
 const nextApp = next({dev: true})
 const nextHandler = nextApp.getRequestHandler()
 nextApp.prepare().then(async () => {
@@ -13,6 +13,6 @@ nextApp.prepare().then(async () => {
     nextHandler(req, res, parsedUrl)
   })
   const io = new Server(server)
-  setupIO(io)
+  socket(io)
   server.listen(port)
 })

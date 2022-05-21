@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import User from '../../lib/db/user'
-import serializeToken from '../../lib/authentication/serializeToken'
+import serializeToken from '../../lib/auth/serializeToken'
 import validateInput from '../../utils/validateInput'
 
 const createAccount = async (req:NextApiRequest, res: NextApiResponse) => {

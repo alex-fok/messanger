@@ -1,13 +1,5 @@
-import { FC } from 'react'
-import type { ChatListType } from '../types/context'
 import AddButton from './AddButton'
-
-type SideNavProps = FC<{
-  chatList: ChatListType,
-  setActiveChat: (id:string) => void,
-  deleteChat: (id:string) => void
-  addChat: () => void
-}>
+import type {SideNavProps} from '../types/components/sideNav'
 
 const itemClasses = 'text-gray-400 mb-5 hover:text-gray-800 cursor-pointer'
 const chatListClasses = 'flex flex-row rounded-sm text-gray-600 text-sm px-2 py-1 mb-0 cursor-pointer hover:bg-gray-300'
@@ -45,20 +37,20 @@ const SideNav:SideNavProps = ({chatList, setActiveChat, deleteChat, addChat}) =>
 
       <ul className='h-5/6 overflow-y-auto select-none pb-4'>
         { Array.from(chatList.items.entries()).reverse().map(([id, properties]) => 
-            <li
-              className={chatList.selected === id ? chatListActiveClasses : chatListClasses}
-              key={id}
-              onClick={() => handleSetActive(id) }
-            >
-              <span className='flex-auto'>
-                {properties.name.length < 16 ? properties.name : properties.name.slice(0, 16) + '...'}
-              </span>
-              <span
-                className='order-last hover:text-gray-200'
-                onClick={() => handleDelete(id)}
-              >&#x2716;
-              </span>
-            </li>
+          <li
+            className={chatList.selected === id ? chatListActiveClasses : chatListClasses}
+            key={id}
+            onClick={() => handleSetActive(id) }
+          >
+            <span className='flex-auto'>
+              {properties.name.length < 16 ? properties.name : properties.name.slice(0, 16) + '...'}
+            </span>
+            <span
+              className='order-last hover:text-gray-200'
+              onClick={() => handleDelete(id)}
+            >&#x2716;
+            </span>
+          </li>
         )}
       </ul>
     </details>

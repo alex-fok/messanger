@@ -1,14 +1,9 @@
 import { ObjectId } from 'mongodb'
 import Chat from './models/chat'
 import User from './models/user'
-import { MessageType } from '../../types/context'
+import { Message } from '../../types/global'
 import { getUserCollection, getChatCollection} from './connection'
-
-type CreateChatType =  {
-  timestamp: number,
-  chatId: ObjectId,
-  participantIds: ObjectId[]
-}
+import type { CreateChat } from '../../types/lib/db/chat'
 
 const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
    const timestamp = Date.now() 
@@ -19,7 +14,7 @@ const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
     const chatCollection = await getChatCollection()
     const {value} = await chatCollection.findOneAndUpdate(
       {_id:chatId}, 
-      {$push: {'history': { timestamp, sender, message }}
+      {$push: {'history': { timestamp, sender:sender.toString(), message }}
     })
     if (!value) throw new Error('Chat - Add Message: Chat not found')
     
@@ -34,7 +29,7 @@ const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
     return { timestamp, sender: senderInfo.nickname, message }
 }
 
-const create = async(requesterId: ObjectId, participants: string[], message: string) : Promise<CreateChatType> => {
+const create = async(requesterId: ObjectId, participants: string[], message: string) : Promise<CreateChat> => {
   const userCollection = await getUserCollection()
   const participantIds: ObjectId[] =
     (await userCollection.find({username: {$in: participants}}).toArray()).map(user => user._id)
@@ -43,7 +38,7 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   if (!participantIds.includes(requesterId)) participantIds.push(requesterId)
   const timestamp = Date.now()
   const {insertedId} = await chatCollection.insertOne(
-    new Chat(participantIds, [{timestamp,sender: requesterId, message}])
+    new Chat(participantIds, [{timestamp,sender: requesterId.toString(), message}])
   )
   // Add chat reference for participants
   const updateParticipants = userCollection.updateMany(
@@ -72,7 +67,7 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   }
 }
 
-const get = async(chatId:ObjectId, userId:ObjectId):Promise<MessageType[]> => {
+const get = async(chatId:ObjectId, userId:ObjectId):Promise<Message[]> => {
   const chatCollection = await getChatCollection()
   const chat = await chatCollection.findOne({_id: chatId})
 

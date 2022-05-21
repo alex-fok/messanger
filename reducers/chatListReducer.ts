@@ -1,4 +1,4 @@
-import type { ChatListType, ChatListActionType } from "../../types/context"
+import type { ChatListType, ChatListActionType } from "../types/contexts"
 
 const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatListType => {
   console.log('action:', action)

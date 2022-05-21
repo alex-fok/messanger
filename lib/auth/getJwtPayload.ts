@@ -1,12 +1,8 @@
 import cookie from 'cookie'
 import User from '../db/user'
+import { Payload } from '../../types/lib/auth/getJwtPayload'
 
-type PayloadType = {
-  username: string,
-  jwt: string
-}
-
-const getJwtPayload = async (requestCookies:string | undefined): Promise<PayloadType | null> => {
+const getJwtPayload = async (requestCookies:string | undefined): Promise<Payload> => {
   if (!requestCookies) return null
 
   const { jwt } = cookie.parse(requestCookies)

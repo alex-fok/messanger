@@ -1,9 +1,6 @@
 import { MongoClient } from 'mongodb'
 const MONGODB_URI = process.env.MONGODB_URI
 const NODE_ENV = process.env.NODE_ENV
-declare global {
-  var _mongoClientPromise : Promise<MongoClient>
-}
 
 let cachedClient:MongoClient
 

@@ -1,8 +1,4 @@
-import { FC, MouseEventHandler } from "react"
-
-type AddButtonFC = FC<{
-  onClick: MouseEventHandler<HTMLButtonElement> | (() => void)
-}>
+import { AddButtonFC } from "../types/components/addbutton"
 
 const AddButton:AddButtonFC = ({onClick}) => {
   return (

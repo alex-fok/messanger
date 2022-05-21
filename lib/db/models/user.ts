@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb'
 
-export type ChatsType = {
+type Chat = {
   name:string,
   unread: number
 }
@@ -11,6 +11,6 @@ export default class User {
     public password:string,
     public nickname:string,
     public lastModified: number,
-    public chats:Record<string, ChatsType> = {},
+    public chats:Record<string, Chat> = {},
     public _id:ObjectId = new ObjectId()) {}
 }

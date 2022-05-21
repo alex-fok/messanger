@@ -1,14 +1,9 @@
-import {ObjectId} from 'mongodb'
-
-interface MessageType {
-  timestamp: number,
-  sender: ObjectId,
-  message: string
-}
+import { ObjectId } from 'mongodb'
+import { Message } from '../../../types/global'
 
 export default class Chat {
   constructor(
     public participants: ObjectId[],
-    public history: MessageType[],
+    public history: Message[],
     public _id: ObjectId = new ObjectId()) {}
 }

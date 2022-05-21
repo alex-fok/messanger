@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useRef, useState, useContext, SyntheticEvent } from 'react'
+import { useEffect, useRef, useState, useContext } from 'react'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
-import UserLookUpModal from './UserLookUpModal'
-import type {ContextType} from '../types/context'
-import Context from '../lib/contexts'
+import UserLookUpModal from './UserLookUp'
+import Context from '../contexts/app'
+import type { ContextType } from '../types/components/navbar'
 
 const Navbar = () => {
   const {search} = useContext<ContextType>(Context)

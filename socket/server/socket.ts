@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { Server, Socket } from 'socket.io'
-import User from '../lib/db/user'
-import Chat from '../lib/db/chat'
+import User from '../../lib/db/user'
+import Chat from '../../lib/db/chat'
 
 const setup = (io: Server) => {
   io.on('connection', async (socket:Socket) => {
