@@ -1,9 +1,5 @@
 import {ObjectId} from 'mongodb'
-
-type Chat = {
-  name:string,
-  unread: number
-}
+import type { ChatMeta } from '../../../types/global'
 
 export default class User {
   constructor(
@@ -11,6 +7,6 @@ export default class User {
     public password:string,
     public nickname:string,
     public lastModified: number,
-    public chats:Record<string, Chat> = {},
+    public chats:Record<string, ChatMeta> = {},
     public _id:ObjectId = new ObjectId()) {}
 }

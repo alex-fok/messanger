@@ -1,5 +1,6 @@
+import { ChatMeta } from '../../types/global'
 export type ChatList = {
-  items: Map<string, {name: string, unread: number}>
+  items: Map<string, ChatMeta>
   selected: string
 }
 

@@ -1,6 +1,6 @@
-import type { ChatListType, ChatListActionType } from "../types/contexts"
+import type { ChatList, ChatListAction } from "../types/reducers/chatlistReducer"
 
-const chatListReducer = (state: ChatListType, action: ChatListActionType):ChatListType => {
+const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
   console.log('action:', action)
   switch(action.type) {
     case 'incomingMsg': {

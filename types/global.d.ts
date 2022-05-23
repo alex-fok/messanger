@@ -3,3 +3,7 @@ export type Message = {
   timestamp: number | undefined,
   message: string
 }
+export type ChatMeta = {
+  name: string,
+  unread: number
+}
