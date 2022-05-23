@@ -8,10 +8,8 @@ type EventHandlers = {
 }
 
 let socket:Socket 
-const setSocket = (jwt:string) => {
-  if (socket) return socket
-  return (socket = io({query: {token: jwt }}))
-}
+const setSocket = (jwt:string) => socket || (socket = io({ query: { token: jwt } })) 
+
 const getSocket = () => socket
 
 const setSocketEventHandlers = (eventHandlers:EventHandlers[]) => {
