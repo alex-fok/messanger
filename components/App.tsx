@@ -10,7 +10,7 @@ import getSocketEvents from '../socket/client/events/app'
 import { getVal, resetVal } from '../utils/valGenerator'
 
 const App:FC<{data:Data}> = ({data}) => {
-  const jwt = useMemo(() => {console.log('SOmething');return data.jwt}, [data])
+  const jwt = useMemo(() => data.jwt, [data])
   const socket = useMemo(() => setSocket(jwt), [jwt])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [activeChat, dispatchActiveChat] =

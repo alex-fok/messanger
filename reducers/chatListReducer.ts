@@ -15,6 +15,7 @@ const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
       return {...state}
     }
     case 'setActive': {
+      if (state.selected === action.chatId) return state 
       state.selected = action.chatId
       return {...state}
     }
