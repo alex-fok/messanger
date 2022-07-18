@@ -5,8 +5,8 @@ const search = async({name, $or}:{name: string, $or: string[]}, keyword: string)
   const client = await connectToDB()
   const db = client.db()
 
-  const isColExisting = db.listCollections({name})
-  if(!isColExisting) return {error: 'No Collection Found'}
+  const isColValid = db.listCollections({name})
+  if(!isColValid) return {error: 'No Collection Found'}
   
   const query = {
     $or: $or.map(category => ({[category]: keyword}))
