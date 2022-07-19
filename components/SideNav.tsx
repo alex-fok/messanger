@@ -1,7 +1,16 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import type {SideNavFC, DMTitleFC, ChatItemsFC, ChatItemFC, ExpandBtnFC, ChatListBtnsFC} from '../types/components/sideNav'
 import Button from './common/Button'
+import UserLookUp from './UserLookUp'
+
+import type {
+  SideNavFC,
+  DMTitleFC,
+  ChatItemsFC,
+  ChatItemFC,
+  ExpandBtnFC,
+  ChatListBtnsFC
+} from '../types/components/sideNav'
 
 let _deleting:string
 
@@ -30,7 +39,7 @@ const ChatListBtns:ChatListBtnsFC = ({isVisible, handleSetActive}) => {
 const Selections:FC = () => {
   const itemClasses = 'text-gray-400 mb-5 hover:text-gray-800 cursor-pointer'
   return (
-    <ul className='mt-12  text-xl font-semibold'>
+    <ul className='mt-12 text-xl font-semibold'>
       <li className={itemClasses}><a>Contact</a></li>
       <li className={itemClasses}><a>Profile</a></li>
     </ul>
@@ -64,7 +73,7 @@ const DMTitle:DMTitleFC = ({handleAdd}) => {
   )
 }
 
-const ChatListItem:ChatItemFC = ({id, isSelected, meta, handleSetActive}) => {
+const ChatListItem:ChatItemFC = ({id, isSelected, meta, handleSetActive, handleDelete}) => {
   const [isBtnsVisible, setIsBtnsVisible] = useState(false)
   useEffect(() => { setIsBtnsVisible(isSelected) }, [isSelected])
   return (
@@ -105,7 +114,7 @@ const ChatList:ChatItemsFC = ({ chatList, handleSetActive, handleDelete }) => {
           meta={properties}
           isSelected={chatList.selected === id}
           handleSetActive={handleSetActive}
-//          handleDelete={handleDelete}
+          handleDelete={handleDelete}
         /> 
       )}
     </ul>
@@ -113,6 +122,7 @@ const ChatList:ChatItemsFC = ({ chatList, handleSetActive, handleDelete }) => {
 }
 
 const SideNav:SideNavFC = ({chatList, setActiveChat, deleteChat, addChat}) => {
+  const [isCreating, setIsCreating] = useState(false)
   const handleSetActive = (id:string) => {
     if (_deleting !== id) setActiveChat(id)
   }
@@ -120,21 +130,27 @@ const SideNav:SideNavFC = ({chatList, setActiveChat, deleteChat, addChat}) => {
     deleteChat(id)
     _deleting = id
   }
-  const handleAdd = () => { addChat() }
+  const handleAdd = () => { setIsCreating(true) }
 
   return (
-    <nav className='w-44 ml-4 lg:ml-12 px-2 h-full'>
-      <Selections />
-      <br />
-      <details open className='h-3/4 pb-24 cursor-default'>
-        <DMTitle handleAdd={handleAdd} /> 
-        <ChatList
-          chatList={chatList}
-          handleSetActive={handleSetActive}
-          handleDelete={handleDelete}
-        />
-      </details>
-    </nav>
+    <>
+      <UserLookUp
+        show={isCreating}
+        onClose={() => { setIsCreating(false) }}
+      />
+      <nav className='w-44 ml-4 lg:ml-12 px-2 h-full'>
+        <Selections />
+        <br />
+        <details open className='h-3/4 pb-24 cursor-default'>
+          <DMTitle handleAdd={handleAdd} />
+          <ChatList
+            chatList={chatList}
+            handleSetActive={handleSetActive}
+            handleDelete={handleDelete}
+          />
+        </details>
+      </nav>
+    </>
   )
 }
 export default SideNav

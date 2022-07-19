@@ -7,7 +7,6 @@ import Layout from './Layout'
 import SideNav from './SideNav'
 import Context from '../contexts/app'
 import getSocketEvents from '../socket/client/events/app'
-import { getVal, resetVal } from '../utils/valGenerator'
 
 const App:FC<{data:Data}> = ({data}) => {
   const jwt = useMemo(() => data.jwt, [data])
@@ -53,11 +52,13 @@ const App:FC<{data:Data}> = ({data}) => {
     dispatchActiveChat({type: 'deselect', chatId})
     socket.emit('removeChat', chatId)
   }
-  const addChatToList = () => {
-    const val = getVal()
-    dispatchChatList({type: 'addTempChat', tmpId: val})
-    dispatchActiveChat({type: 'switchActive', chatId: val})
-    resetVal()
+  const startUserLookUp = () => {
+    // const val = getVal()
+    // dispatchChatList({type: 'addTempChat', tmpId: val})
+    // dispatchActiveChat({type: 'switchActive', chatId: val})
+    // resetVal()
+
+    
   }
   const addMsg = (message: string) => {
     dispatchActiveChat({type: 'addMsg', user: data.username, message})
@@ -75,7 +76,7 @@ const App:FC<{data:Data}> = ({data}) => {
           chatList={defaultValue.chat.list}
           setActiveChat={setActiveChat}
           deleteChat={deleteChat}
-          addChat={addChatToList}
+          addChat={startUserLookUp}
         />
         <Chat
           chat={defaultValue.chat.active}

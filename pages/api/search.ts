@@ -18,8 +18,7 @@ const search = async (req:NextApiRequest, res:NextApiResponse) => {
   const payload = getJwtPayload(req.headers.cookie)
   
   if (!payload) return {error: 'User not logged in', redirect: true}
-  
-  const {type, keyword}: SearchRequestBody = req.body 
+  const {type, keyword}: SearchRequestBody = JSON.parse(req.body)
   if (type in dbNameMap) {
     const dbResult = await dbSearch(dbNameMap[type], keyword)
     return res.json(dbResult)

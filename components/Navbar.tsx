@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useRef, useState, useContext } from 'react'
+import { useEffect, useRef, useState, useCallback, useContext } from 'react'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
-import UserLookUpModal from './UserLookUp'
+import UserLookUp from './UserLookUp'
 import Context from '../contexts/app'
 import type { ContextType } from '../types/components/navbar'
 
@@ -10,13 +10,8 @@ const Navbar = () => {
   const {keyword, setKeyword} = search
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [isSearchFocused, setSearchFocused] = useState<boolean>(false)
-  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false)
   const searchRef = useRef<HTMLInputElement>(null)
-  
-  const hideModal = (type:'search' | 'logout') => ({
-    'search': () => {setIsSearching(false)},
-    'logout': () => {setIsLoggingOut(false)}
-  }[type]())
+  const hideDialog = useCallback(() => setIsSearching(false), [setIsSearching])
 
   const searchUser = () => {
     if (keyword === '') return
@@ -49,14 +44,11 @@ const Navbar = () => {
 
   return (
     <>
-      { isSearching 
-        ? <UserLookUpModal
-            hideContent={() => {hideModal('search')}} 
-            keyword={keyword}
-            setKeyword={setKeyword}
-          />
-        : null }
-      
+      <UserLookUp
+        show={isSearching}
+        onClose={hideDialog}
+        keyword={keyword}
+      />
       <nav className='top-0 w-screen flex flex-row bg-gray-900 pr-12 md:pr-36 lg:pr-48 py-5 justify-end text-gray-400'>        
         <div className='flex flex-row p-0'>
           <div

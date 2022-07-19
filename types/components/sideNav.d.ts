@@ -26,6 +26,7 @@ export type ChatItemFC = FC<{
   isSelected:boolean
   meta: ChatMeta,
   handleSetActive: (id:string) => void,
+  handleDelete: (id: string) => void
 }>
 
 export type ChatItemsFC = FC<{
