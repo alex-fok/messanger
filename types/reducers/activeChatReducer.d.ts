@@ -2,19 +2,17 @@ import { Message } from '../global'
 export type ActiveChat = {
   id: string,
   history: Message[],
-  tmpId?: string
+  participants: string[],
+  tmpId?: string,
 }
 
 export type ChatAction = {
   type: 'switchActive',
-  chatId: string
+  chatId: string,
 } | {
   type: 'addMsg',
   message: string,
   user: string
-} | {
-  type: 'addChat',
-  participants: string[]
 } | {
   type: 'createMsg',
   chatId: string,
@@ -25,6 +23,10 @@ export type ChatAction = {
   chatId: string,
   tmpId: string,
   timestamp: number
+} | {
+  type: 'createTmp',
+  participants: string[],
+  tmpId: string
 } | {
   type: 'addParticipants',
   chatId: string

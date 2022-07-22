@@ -4,6 +4,7 @@ import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
 import Context from '../contexts/app'
 import Dialog from './common/Dialog'
 import { usersFoundReducer } from '../reducers/usersFoundReducer'
+import { getNewVal } from '../utils/valGenerator'
 
 import type {
   ContextType,
@@ -90,24 +91,48 @@ const UsersFoundList:UsersFoundListFC = ({isLoading, usersFound, updateUsersFoun
   )
 }
 
-const Footer:FooterFC = ({usersFound, dispatchActiveChat, onClose}) =>
-  <div className='px-2 py-1 font-light self-end'>
-    <button
-      className={`px-2 py-1 rounded font-light disabled:text-gray-300 ${usersFound.count === 0 ? 'cursor-auto' : 'cursor-pointer hover:underline'}`}
-      onClick={() => {
-        dispatchActiveChat({ type: 'addChat', participants:usersFound.list.map(user => user.username) })
-      }}
-      disabled={usersFound.count === 0}
-    >Create Chat</button>
-    <button
-      className='px-2 py-1 rounded font-light disabled:text-gray-300 hover:underline'
-      onClick={onClose}
-    >Close</button>
-  </div>
+const Footer:FooterFC = ({usersFound, onClose}) => {
+  const {chat} = useContext<ContextType>(Context)
+  const {
+    dispatchActive: dispatchActiveChat,
+    dispatchList: dispatchChatList
+  } = chat
+
+  const createTmp = () => {
+    const tmpId = `tmp_${getNewVal()}`
+    dispatchActiveChat({
+      type:'createTmp',
+      participants: usersFound.list.filter(users => users.added).map(users => users.username),
+      tmpId
+    })
+    dispatchChatList({
+      type:'addTmpChat',
+      tmpId
+    })
+    onClose()
+  }
+
+  return (
+    <Context.Consumer>
+      {() => 
+        <div className='px-2 py-1 font-light self-end'>
+        <button
+          className={`px-2 py-1 rounded font-light disabled:text-gray-300 ${usersFound.count === 0 ? 'cursor-auto' : 'cursor-pointer hover:underline'}`}
+          onClick={createTmp}
+          disabled={usersFound.count === 0}
+        >Create Chat</button>
+        <button
+          className='px-2 py-1 rounded font-light disabled:text-gray-300 hover:underline'
+          onClick={onClose}
+        >Close</button>
+      </div>
+      }
+    </Context.Consumer>
+  )
+}
 
 const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
-  const {chat} = useContext<ContextType>(Context)
-  const {dispatchActive : dispatchActiveChat} = chat
+
   const [input, setInput] = useState<string>(keyword ? keyword : '')
   const [usersFound, updateUsersFound] = useReducer(usersFoundReducer,{list:[], count: 0})
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -122,7 +147,6 @@ const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
         body: JSON.stringify({ type: 'user', keyword: input })
       })
       .then(res => res.json())
-    console.log(data)
     setIsLoading(false)
     updateUsersFound({
       type: 'set',
@@ -159,7 +183,6 @@ const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
         updateUsersFound={updateUsersFound}
       />
       <Footer
-        dispatchActiveChat={dispatchActiveChat}
         usersFound={usersFound}
         onClose={onClose}
       />

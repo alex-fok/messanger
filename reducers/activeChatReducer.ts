@@ -1,4 +1,9 @@
 import type { ActiveChat, ChatAction } from '../types/reducers/activeChatReducer'
+const getEmpty = () => ({
+  id: '',
+  history: [],
+  participants: []
+})
 
 const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => {
   console.log('action:', action)
@@ -6,7 +11,8 @@ const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => 
     case 'switchActive': { 
       return {
         id: action.chatId,
-        history: [/*Loading Chat*/]
+        history: [/*Loading Chat*/],
+        participants: [/*Loading Partcipants*/]
       }
     }
     case 'addMsg': {
@@ -17,7 +23,7 @@ const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => 
         message: action.message
       })
       return {
-        id:state.id,
+        ...state,
         history: copy
       }
     }
@@ -33,26 +39,31 @@ const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => 
       delete state.tmpId
       return {...state}
     }
+    case 'createTmp' : {
+      return {
+        id: action.tmpId,
+        history: [],
+        participants: action.participants,
+        tmpId: action.tmpId
+      }
+    }
     case 'renewChat': {
       if (state.id !== action.chatId) return state
       return {
-        id: action.chatId,
+        ...state,
         history: action.history
       }
     }
     case 'deselect': {
       if (state.id !== action.chatId) return state
-      return {
-        id: '',
-        history: []
-      }
+      return getEmpty()
     }
     case 'newMsg': {
       if (state.id !== action.chatId) return state
       const copy = state.history.slice()
       copy.push(action.message)
       return {
-        id: state.id,
+        ...state,
         history: copy
       }
     }

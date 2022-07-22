@@ -29,7 +29,6 @@ export type SearchInputFC = FC<{
 }>
 
 export type FooterFC = FC<{
-  dispatchActiveChat: Dispatch<ChatAction>,
   usersFound: UsersFoundState,
   onClose: () => void
 }>

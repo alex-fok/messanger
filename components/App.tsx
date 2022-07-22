@@ -7,6 +7,7 @@ import Layout from './Layout'
 import SideNav from './SideNav'
 import Context from '../contexts/app'
 import getSocketEvents from '../socket/client/events/app'
+import { getNewVal } from '../utils/valGenerator'
 
 const App:FC<{data:Data}> = ({data}) => {
   const jwt = useMemo(() => data.jwt, [data])
@@ -15,29 +16,14 @@ const App:FC<{data:Data}> = ({data}) => {
   const [activeChat, dispatchActiveChat] =
     useReducer(activeChatReducer, {
       id: '',
-      history: []
+      history: [],
+      participants:[]
   })
   const [chatList, dispatchChatList] = 
     useReducer(chatListReducer, {
       items: new Map(Object.entries(data.chats)),
       selected: ''
   })
-
-  const defaultValue = {
-    user: {
-      username: data.username
-    },
-    search: {
-      keyword: searchKeyword,
-      setKeyword: setSearchKeyword
-    },
-    chat: {
-      active: activeChat,
-      dispatchActive: dispatchActiveChat,
-      list: chatList
-    },
-    socket
-  }
 
   const socketEvents = useMemo(() => getSocketEvents(dispatchActiveChat, dispatchChatList), [dispatchChatList, dispatchActiveChat])
   setSocketEventHandlers(socketEvents)
@@ -52,13 +38,10 @@ const App:FC<{data:Data}> = ({data}) => {
     dispatchActiveChat({type: 'deselect', chatId})
     socket.emit('removeChat', chatId)
   }
-  const startUserLookUp = () => {
-    // const val = getVal()
-    // dispatchChatList({type: 'addTempChat', tmpId: val})
-    // dispatchActiveChat({type: 'switchActive', chatId: val})
-    // resetVal()
-
-    
+  const addChat = (participants:string[]) => {
+    const val = getNewVal()
+    dispatchChatList({type: 'addTmpChat', tmpId: val})
+    dispatchActiveChat({type: 'switchActive', chatId: val})
   }
   const addMsg = (message: string) => {
     dispatchActiveChat({type: 'addMsg', user: data.username, message})
@@ -67,7 +50,24 @@ const App:FC<{data:Data}> = ({data}) => {
   
   const createChat = (message:string) => {
     dispatchActiveChat({type: 'addMsg', user:data.username, message})
-    socket.emit('createChat', activeChat.id, [], message)
+    socket.emit('createChat', activeChat.id, activeChat.participants, message)
+  }
+  
+  const defaultValue = {
+    user: {
+      username: data.username
+    },
+    search: {
+      keyword: searchKeyword,
+      setKeyword: setSearchKeyword
+    },
+    chat: {
+      active: activeChat,
+      dispatchActive: dispatchActiveChat,
+      dispatchList: dispatchChatList,
+      list: chatList
+    },
+    socket
   }
   return (
     <Context.Provider value={defaultValue}>
@@ -76,7 +76,7 @@ const App:FC<{data:Data}> = ({data}) => {
           chatList={defaultValue.chat.list}
           setActiveChat={setActiveChat}
           deleteChat={deleteChat}
-          addChat={startUserLookUp}
+          addChat={addChat}
         />
         <Chat
           chat={defaultValue.chat.active}

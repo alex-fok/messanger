@@ -15,7 +15,8 @@ type User = {
 
 type Chat = {
   active: ActiveChat,
-  dispatchActive: Dispatch<ChatAction>
+  dispatchActive: Dispatch<ChatAction>,
+  dispatchList: Dispatch<ChatListAction>,
   list: ChatList //ids 
 }
 
@@ -23,5 +24,5 @@ export type ContextType = {
   user: User,
   search: Search,
   chat: Chat,
-  socket:Socket
+  socket: Socket
 }

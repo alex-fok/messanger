@@ -14,8 +14,10 @@ export default createContext<ContextType>({
     active: {
       id: '-1',
       history: [],
+      participants:[]
     },
     dispatchActive: () => {},
+    dispatchList: () => {},
     list: {
       items: new Map(),
       selected: ''

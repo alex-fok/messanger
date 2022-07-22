@@ -17,11 +17,11 @@ const setup = (io: Server) => {
   
     socket.on('createChat', async(tmpId:string, participants:string[], message:string) => {
       const copy = participants.slice()
-      if (!copy.includes(user.id)) copy.push(user.id)
+      if (!copy.includes(user.username)) copy.push(user.username)
       const chatResult = await Chat.create(new ObjectId(user.id), copy, message).catch(err => {console.error(err)})
       if (!chatResult) return socket.emit('error', 'Unable to create chat')
       const chatId = chatResult.chatId.toString()
-      copy.forEach(p => {
+      chatResult.participantIds.forEach(p => {
         const pString = p.toString()
         const emitter = pString === user.id ? socket : io
         emitter.to(`user_${pString}`).emit('newChat', chatId, chatId)
