@@ -1,12 +1,5 @@
-let randomVal = Date.now().toString()
-
-const resetVal = () => {
-  randomVal = Date.now().toString()
-}
-
-const getVal = () => randomVal
+const getNewVal = () => Date.now().toString()
 
 export {
-  resetVal,
-  getVal 
+  getNewVal
 }
