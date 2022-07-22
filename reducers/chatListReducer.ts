@@ -30,7 +30,7 @@ const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
       if(state.selected === action.tmpId) state.selected = action.chatId 
       return {...state}
     }
-    case 'addTempChat': {
+    case 'addTmpChat': {
       state.items.set(action.tmpId, {name: '(new)', unread: 0})
       state.selected = action.tmpId
       return {...state}

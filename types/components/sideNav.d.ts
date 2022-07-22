@@ -6,7 +6,7 @@ export type SideNavFC = FC<{
   chatList: ChatList,
   setActiveChat: (id:string) => void,
   deleteChat: (id:string) => void
-  addChat: () => void
+  addChat: (participants:string[]) => void
 }>
 
 export type ExpandBtnFC = FC<{

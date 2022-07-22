@@ -17,22 +17,22 @@ let _deleting:string
 const ChatListBtns:ChatListBtnsFC = ({isVisible, handleSetActive}) => {
   return (
     <div className={`flex flex-row justify-between px-6 ${isVisible ? 'visible' : 'invisible'}`}>
-        <Button
-          className='grow hover:text-cyan-600'
-          onClick={() => handleSetActive()}
-        ><FontAwesomeIcon icon={['fas', 'comments']} />
-        </Button>
-        <Button
-          className='grow border-l border-gray-400 hover:text-green-600'
-          onClick={() => {}}
-        ><FontAwesomeIcon icon={['fas', 'user-plus']} />
-        </Button>
-        <Button
-          className='grow border-l border-gray-400 hover:text-red-700'
-          onClick={() => handleSetActive()}
-        ><FontAwesomeIcon icon={['fas', 'x']} />
-        </Button>
-      </div>
+      <Button
+        className='grow hover:text-cyan-600'
+        onClick={() => handleSetActive()}
+      ><FontAwesomeIcon icon={['fas', 'comments']} />
+      </Button>
+      <Button
+        className='grow border-l border-gray-400 hover:text-green-600'
+        onClick={() => {}}
+      ><FontAwesomeIcon icon={['fas', 'user-plus']} />
+      </Button>
+      <Button
+        className='grow border-l border-gray-400 hover:text-red-700'
+        onClick={() => handleSetActive()}
+      ><FontAwesomeIcon icon={['fas', 'x']} />
+      </Button>
+    </div>
   )
 }
 
@@ -130,7 +130,9 @@ const SideNav:SideNavFC = ({chatList, setActiveChat, deleteChat, addChat}) => {
     deleteChat(id)
     _deleting = id
   }
-  const handleAdd = () => { setIsCreating(true) }
+  const handleAdd = () => {
+    setIsCreating(true)
+  }
 
   return (
     <>

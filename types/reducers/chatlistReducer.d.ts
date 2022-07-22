@@ -23,6 +23,6 @@ export type ChatListAction = {
   chatId: string,
   name: string
 } | {
-  type: 'addTempChat',
+  type: 'addTmpChat',
   tmpId: string
 }
