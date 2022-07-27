@@ -7,7 +7,6 @@ import Layout from './Layout'
 import SideNav from './SideNav'
 import Context from '../contexts/app'
 import getSocketEvents from '../socket/client/events/app'
-import { getNewVal } from '../utils/valGenerator'
 
 const App:FC<{data:Data}> = ({data}) => {
   const jwt = useMemo(() => data.jwt, [data])
@@ -27,31 +26,6 @@ const App:FC<{data:Data}> = ({data}) => {
 
   const socketEvents = useMemo(() => getSocketEvents(dispatchActiveChat, dispatchChatList), [dispatchChatList, dispatchActiveChat])
   setSocketEventHandlers(socketEvents)
- 
- const setActiveChat = (chatId:string) => {
-    dispatchChatList({type: 'setActive', chatId})
-    dispatchActiveChat({type: 'switchActive', chatId})
-    socket.emit('getChat', chatId)
-  }
-  const deleteChat = (chatId:string) => {
-    dispatchChatList({type: 'deleteChat', chatId})
-    dispatchActiveChat({type: 'deselect', chatId})
-    socket.emit('removeChat', chatId)
-  }
-  const addChat = (participants:string[]) => {
-    const val = getNewVal()
-    dispatchChatList({type: 'addTmpChat', tmpId: val})
-    dispatchActiveChat({type: 'switchActive', chatId: val})
-  }
-  const addMsg = (message: string) => {
-    dispatchActiveChat({type: 'addMsg', user: data.username, message})
-    socket.emit('message', activeChat.history.length, activeChat.id, message)
-  }
-  
-  const createChat = (message:string) => {
-    dispatchActiveChat({type: 'addMsg', user:data.username, message})
-    socket.emit('createChat', activeChat.id, activeChat.participants, message)
-  }
   
   const defaultValue = {
     user: {
@@ -65,24 +39,14 @@ const App:FC<{data:Data}> = ({data}) => {
       active: activeChat,
       dispatchActive: dispatchActiveChat,
       dispatchList: dispatchChatList,
-      list: chatList
     },
     socket
   }
   return (
     <Context.Provider value={defaultValue}>
       <Layout>
-        <SideNav
-          chatList={defaultValue.chat.list}
-          setActiveChat={setActiveChat}
-          deleteChat={deleteChat}
-          addChat={addChat}
-        />
-        <Chat
-          chat={defaultValue.chat.active}
-          addMessage={addMsg}
-          createChat={createChat}
-        />
+        <SideNav chatList={chatList} />
+        <Chat selected={defaultValue.chat.active} />
       </Layout>
     </Context.Provider>
   )

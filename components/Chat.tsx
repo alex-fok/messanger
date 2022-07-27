@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FC, FormEventHandler, useState } from 'react'
+import { FC, FormEventHandler, useContext, useState } from 'react'
 import autoResizeTextArea from '../utils/htmlElements/autoResizeTextArea'
+import AppContext from '../contexts/app'
+import { useMemo } from 'react'
 import type { UserInputAreaFC, ChatFC } from '../types/components/chat'
 import type { Message } from '../types/global'
 
@@ -14,18 +16,18 @@ const printTime = (timestamp:number):string => {
 const UserInputArea:UserInputAreaFC = ({userInputHandler, message, sendMessage}) => {
   return (
     <div className='flex flex-row item-stretch'>
-        <textarea 
-          className='rounded-md resize-none w-11/12 border-2 border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent'
-          style={{height: '32px'}}
-          onInput={userInputHandler}
-          value={message}
-        ></textarea>
-        <button
-          className='rounded-md w-1/12 px-2 m-2 text-xl text-gray-500 hover:text-indigo-500'
-          onClick={sendMessage}
-        ><FontAwesomeIcon icon={['fas', 'paper-plane']}/>
-        </button>
-      </div>
+      <textarea
+        className='rounded-md resize-none w-11/12 border-2 border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent'
+        style={{height: '32px'}}
+        onInput={userInputHandler}
+        value={message}
+      ></textarea>
+      <button
+        className='rounded-md w-1/12 px-2 m-2 text-xl text-gray-500 hover:text-indigo-500'
+        onClick={sendMessage}
+      ><FontAwesomeIcon icon={['fas', 'paper-plane']}/>
+      </button>
+    </div>
   )
 }
 
@@ -67,10 +69,19 @@ const ChatContainer:FC = ({children}) => {
   )
 }
 
-const Chat:ChatFC = ({chat, addMessage, createChat}) => {
+const Chat:ChatFC = ({selected}) => {
   const [message, setMessage] = useState<string>('')
+  const {chat, user, socket} = useContext(AppContext)
+  const [dispatchActive] = useMemo(() => [chat.dispatchActive, chat.dispatchList], [chat])
+
   const sendMessage = () => {
-    chat.history.length === 0 ? createChat(message) : addMessage(message)
+    const {id, history, participants} = chat.active
+    dispatchActive({type: 'addMsg', user:user.username, message})
+
+    selected.history.length
+      ? socket.emit('message', history.length, id, message)
+      : socket.emit('createChat', id, participants, message)
+
     setMessage('')
   }
 
@@ -81,7 +92,7 @@ const Chat:ChatFC = ({chat, addMessage, createChat}) => {
 
   return (
     <ChatContainer>
-      <ChatHistory history={chat.history} />
+      <ChatHistory history={selected.history} />
       <ChatOptions />
       <UserInputArea
         userInputHandler={userInputHandler}

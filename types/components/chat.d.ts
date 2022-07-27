@@ -1,9 +1,7 @@
 import { FC, FormEventHandler, useState } from 'react'
-import { ActiveChatType, Message } from '../contexts'
+import { ActiveChatType, Message } from '../contexts/app'
 export type ChatFC = FC<{
-  chat:ActiveChatType,
-  addMessage: (message:string)=>void,
-  createChat: (message:string)=>void
+  selected:ActiveChatType
 }>
 export type Message = Message
 export type UserInputAreaFC = FC<{

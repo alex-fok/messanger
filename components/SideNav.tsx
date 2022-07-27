@@ -1,7 +1,8 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from './common/Button'
 import UserLookUp from './UserLookUp'
+import AppContext from '../contexts/app'
 
 import type {
   SideNavFC,
@@ -14,7 +15,7 @@ import type {
 
 let _deleting:string
 
-const ChatListBtns:ChatListBtnsFC = ({isVisible, handleSetActive}) => {
+const ChatListBtns:ChatListBtnsFC = ({isVisible, handleSetActive, handleDelete}) => {
   return (
     <div className={`flex flex-row justify-between px-6 ${isVisible ? 'visible' : 'invisible'}`}>
       <Button
@@ -29,7 +30,7 @@ const ChatListBtns:ChatListBtnsFC = ({isVisible, handleSetActive}) => {
       </Button>
       <Button
         className='grow border-l border-gray-400 hover:text-red-700'
-        onClick={() => handleSetActive()}
+        onClick={() => handleDelete()}
       ><FontAwesomeIcon icon={['fas', 'x']} />
       </Button>
     </div>
@@ -73,9 +74,26 @@ const DMTitle:DMTitleFC = ({handleAdd}) => {
   )
 }
 
-const ChatListItem:ChatItemFC = ({id, isSelected, meta, handleSetActive, handleDelete}) => {
+const ChatListItem:ChatItemFC = ({id, isSelected, meta}) => {
   const [isBtnsVisible, setIsBtnsVisible] = useState(false)
+  const {chat, socket} = useContext(AppContext)
+  const [dispatchActive, dispatchList] = useMemo(() => [chat.dispatchActive, chat.dispatchList], [chat])
+  
+  const setActive = (chatId:string) => {
+    if(_deleting === chatId) return
+    dispatchList({type: 'setActive', chatId})
+    dispatchActive({type: 'switchActive', chatId})
+    socket.emit('getChat', chatId)
+  }
+
+  const deleteChat = (chatId:string) => {
+    dispatchActive({type: 'deselect', chatId})
+    dispatchList({type: 'deleteChat', chatId})
+    socket.emit('removeChat', chatId)
+  }
+
   useEffect(() => { setIsBtnsVisible(isSelected) }, [isSelected])
+
   return (
     <li
       className={`flex flex-col justify-around rounded-md text-gray-600 text-sm mb-0 cursor-pointer`}
@@ -86,7 +104,7 @@ const ChatListItem:ChatItemFC = ({id, isSelected, meta, handleSetActive, handleD
       <div className={`flex flex-row justify-around`}>
         <span
           className={`rounded-l-sm px-1 py-1 ${isSelected ? 'font-medium' : ''}`}
-          onClick={() => handleSetActive(id)}
+          onClick={() => setActive(id)}
         >
           {meta.name.length < 15 ? meta.name : meta.name.slice(0, 15) + '...'}
         </span>
@@ -97,14 +115,16 @@ const ChatListItem:ChatItemFC = ({id, isSelected, meta, handleSetActive, handleD
       </div>
       <ChatListBtns
         isVisible={isBtnsVisible}
-        handleSetActive={() => handleSetActive(id)}
+        handleSetActive={() => setActive(id)}
+        handleDelete={() => deleteChat(id)}
       />
     </li>
   )
 }
 
-const ChatList:ChatItemsFC = ({ chatList, handleSetActive, handleDelete }) => {
+const ChatList:ChatItemsFC = ({chatList}) => {
   const chatArray = useMemo(() => Array.from(chatList.items.entries()).reverse(), [chatList])
+ 
   return (
     <ul className='h-5/6 overflow-y-auto select-none pb-4'>
       { chatArray.map(([id, properties]) => 
@@ -113,23 +133,15 @@ const ChatList:ChatItemsFC = ({ chatList, handleSetActive, handleDelete }) => {
           id={id}
           meta={properties}
           isSelected={chatList.selected === id}
-          handleSetActive={handleSetActive}
-          handleDelete={handleDelete}
         /> 
       )}
     </ul>
   )
 }
 
-const SideNav:SideNavFC = ({chatList, setActiveChat, deleteChat, addChat}) => {
+const SideNav:SideNavFC = ({chatList}) => {
   const [isCreating, setIsCreating] = useState(false)
-  const handleSetActive = (id:string) => {
-    if (_deleting !== id) setActiveChat(id)
-  }
-  const handleDelete = (id:string) => {
-    deleteChat(id)
-    _deleting = id
-  }
+  
   const handleAdd = () => {
     setIsCreating(true)
   }
@@ -145,11 +157,7 @@ const SideNav:SideNavFC = ({chatList, setActiveChat, deleteChat, addChat}) => {
         <br />
         <details open className='h-3/4 pb-24 cursor-default'>
           <DMTitle handleAdd={handleAdd} />
-          <ChatList
-            chatList={chatList}
-            handleSetActive={handleSetActive}
-            handleDelete={handleDelete}
-          />
+          <ChatList chatList={chatList}/>
         </details>
       </nav>
     </>
