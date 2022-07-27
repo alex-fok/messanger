@@ -1,8 +1,8 @@
 import { createContext } from 'react'
-import type { ContextType } from '../../types/contexts'
+import type { AppContext } from '../../types/contexts/app'
 import io from 'socket.io-client'
 
-export default createContext<ContextType>({
+export default createContext<AppContext>({
   user: {
     username: ''
   },
@@ -18,10 +18,6 @@ export default createContext<ContextType>({
     },
     dispatchActive: () => {},
     dispatchList: () => {},
-    list: {
-      items: new Map(),
-      selected: ''
-    },
   },
   socket: io()
 })

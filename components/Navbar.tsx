@@ -3,10 +3,10 @@ import { useEffect, useRef, useState, useCallback, useContext } from 'react'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
 import UserLookUp from './UserLookUp'
 import Context from '../contexts/app'
-import type { ContextType } from '../types/components/navbar'
+import type { AppContext } from '../types/components/navbar'
 
 const Navbar = () => {
-  const {search} = useContext<ContextType>(Context)
+  const {search} = useContext<AppContext>(Context)
   const {keyword, setKeyword} = search
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [isSearchFocused, setSearchFocused] = useState<boolean>(false)

@@ -7,7 +7,7 @@ import { usersFoundReducer } from '../reducers/usersFoundReducer'
 import { getNewVal } from '../utils/valGenerator'
 
 import type {
-  ContextType,
+  AppContext,
   SearchInputFC,
   UserActionIconFC,
   UserLookUpFC,
@@ -92,7 +92,7 @@ const UsersFoundList:UsersFoundListFC = ({isLoading, usersFound, updateUsersFoun
 }
 
 const Footer:FooterFC = ({usersFound, onClose}) => {
-  const {chat} = useContext<ContextType>(Context)
+  const {chat} = useContext<AppContext>(Context)
   const {
     dispatchActive: dispatchActiveChat,
     dispatchList: dispatchChatList

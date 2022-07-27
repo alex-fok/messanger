@@ -1,4 +1,4 @@
-import type {Message} from '../contexts'
+import type {Message} from '../contexts/app'
 type Chat = { 
   unread: number,
   name: string

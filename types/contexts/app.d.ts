@@ -17,10 +17,9 @@ type Chat = {
   active: ActiveChat,
   dispatchActive: Dispatch<ChatAction>,
   dispatchList: Dispatch<ChatListAction>,
-  list: ChatList //ids 
 }
 
-export type ContextType = {
+export type AppContext = {
   user: User,
   search: Search,
   chat: Chat,

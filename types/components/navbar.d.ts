@@ -1,3 +1,3 @@
-import type {ContextType} from '../contexts'
+import type {AppContext} from '../contexts/app'
 
-export type ContextType = ContextType
+export type AppContext = AppContext
