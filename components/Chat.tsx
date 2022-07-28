@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FC, FormEventHandler, useContext, useState } from 'react'
+import { FC, FormEventHandler, useContext, useEffect, useState, useMemo, useRef } from 'react'
 import autoResizeTextArea from '../utils/htmlElements/autoResizeTextArea'
 import AppContext from '../contexts/app'
-import { useMemo } from 'react'
 import type { UserInputAreaFC, ChatFC } from '../types/components/chat'
 import type { Message } from '../types/global'
-
+import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
 
 const printTime = (timestamp:number):string => {
   const dateString = new Date(timestamp).toJSON()
@@ -14,6 +13,8 @@ const printTime = (timestamp:number):string => {
 }
 
 const UserInputArea:UserInputAreaFC = ({userInputHandler, message, sendMessage}) => {
+  useEffect(() => mapKeyAndFn('Enter', sendMessage), [sendMessage])
+
   return (
     <div className='flex flex-row item-stretch'>
       <textarea
@@ -42,21 +43,33 @@ const ChatOptions = () => {
 }
 
 const ChatHistory:FC<{history: Message[]}> = ({history}) => {
+  const ulRef = useRef<HTMLUListElement>(null)
+  useEffect(() => {
+    const ulEl = ulRef.current
+    if (!ulEl) return
+    ulEl.scrollTop = ulEl.scrollHeight
+  }, [history])
   return (
-    <ul className='rounded-md border-2 border-gray-300 h-full focus:outline-none px-4 py-4 overflow-hidden overflow-y-scroll'>
-      {history.map((msgObj, i) => {
-        return (
-          <li
-            className='py-2 mb-3'
-            key={i}
-          >
-            <p className='mb-3'>{msgObj.sender} <span className='text-xs font-thin'>{msgObj.timestamp ? printTime(msgObj.timestamp) : 'Sending...'}:</span></p>
-            <p className='rounded-md border border-gray-400 inline-block py-2 px-4'>
-              <span>{msgObj.message}</span>
-            </p>
-          </li>
-        )
-      })}
+    <ul
+      className='rounded-md border-2 border-gray-300 h-full focus:outline-none px-4 py-4 overflow-hidden overflow-y-scroll'
+      ref={ulRef}
+    >
+      {history.map((msgObj, i) => 
+        <li
+          className='py-2 mb-3'
+          key={i}
+        >
+          <p className='mb-3'>
+            {msgObj.sender}
+            <span className='text-xs font-thin'>
+            {msgObj.timestamp ? printTime(msgObj.timestamp) : 'Sending...'}:
+            </span>
+          </p>
+          <p className='rounded-md border border-gray-400 inline-block py-2 px-4'>
+            <span>{msgObj.message}</span>
+          </p>
+        </li>
+      )}
     </ul>
   )
 }
@@ -75,6 +88,7 @@ const Chat:ChatFC = ({selected}) => {
   const [dispatchActive] = useMemo(() => [chat.dispatchActive, chat.dispatchList], [chat])
 
   const sendMessage = () => {
+    if (message === '') return
     const {id, history, participants} = chat.active
     dispatchActive({type: 'addMsg', user:user.username, message})
 
