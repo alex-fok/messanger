@@ -8,23 +8,23 @@ export type SideNavFC = FC<{
 
 export type ExpandBtnFC = FC<{
   className: string,
-  isExpanded: boolean,
+  isExpanded: boolean
 }>
 
 export type DMTitleFC = FC<{
   handleAdd: () => void
 }>
 export type ChatListBtnsFC = FC<{
-  isVisible: boolean
-  handleSetActive: () => void
+  isVisible: boolean,
+  handleSetActive: () => void,
   handleDelete: () => void
 }>
 export type ChatItemFC = FC<{
   id: string,
-  isSelected:boolean
-  meta: ChatMeta,
+  isSelected:boolean,
+  meta: ChatMeta
 }>
 
 export type ChatItemsFC = FC<{
-  chatList: ChatList,
+  chatList: ChatList
 }>
