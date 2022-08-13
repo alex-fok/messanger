@@ -13,7 +13,7 @@ type User = {
   username: string
 }
 
-type Chat = {
+export type Chat = {
   active: ActiveChat,
   dispatchActive: Dispatch<ChatAction>,
   dispatchList: Dispatch<ChatListAction>,

@@ -33,7 +33,8 @@ export type ChatAction = {
 } | {
   type: 'renewChat',
   chatId: string,
-  history: Message[]
+  history: Message[],
+  participants: string[]
 } | {
   type: 'newMsg',
   chatId: string,

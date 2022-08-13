@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useReducer, useRef, useState, useContext, useCallback } from 'react'
+import { useEffect, useReducer, useRef, useState, useContext, useCallback, useMemo } from 'react'
 import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
 import Context from '../contexts/app'
 import Dialog from './common/Dialog'
@@ -12,6 +12,7 @@ import type {
   UserActionIconFC,
   UserLookUpFC,
   UsersFoundListFC,
+  CurrentUsersFC,
   FooterFC
  } from '../types/components/userLookup'
 
@@ -91,21 +92,38 @@ const UsersFoundList:UsersFoundListFC = ({isLoading, usersFound, updateUsersFoun
   )
 }
 
-const Footer:FooterFC = ({usersFound, onClose}) => {
-  const {chat} = useContext<AppContext>(Context)
-  const {
-    dispatchActive: dispatchActiveChat,
-    dispatchList: dispatchChatList
-  } = chat
+const CurrentUsers: CurrentUsersFC = ({active}) => {
+  return (
+    <>
+      <div className='font-light text-sm mb-2'>Added Users:</div>
+        <div className='flex ml-2'>
+        { active.participants.map(user => 
+          <div
+            key={user}
+            className='border border-gray-400 px-2 py-1 m-1 rounded text-xs font-light'
+          >{user}
+          </div>
+        )}
+        </div>
+    </>
+  ) 
+}
+
+const Footer:FooterFC = ({chat, usersFound, onClose}) => {
+  const {user} = useContext<AppContext>(Context)
+  const {dispatchActive, dispatchList} = useMemo(() => ({
+    dispatchActive: chat.dispatchActive,
+    dispatchList: chat.dispatchList
+  }), [chat])
 
   const createTmp = () => {
     const tmpId = `tmp_${getNewVal()}`
-    dispatchActiveChat({
+    dispatchActive({
       type:'createTmp',
-      participants: usersFound.list.filter(users => users.added).map(users => users.username),
+      participants: [user.username, ...usersFound.list.filter(users => users.added).map(users => users.username)],
       tmpId
     })
-    dispatchChatList({
+    dispatchList({
       type:'addTmpChat',
       tmpId
     })
@@ -113,26 +131,22 @@ const Footer:FooterFC = ({usersFound, onClose}) => {
   }
 
   return (
-    <Context.Consumer>
-      {() => 
-        <div className='px-2 py-1 font-light self-end'>
-        <button
-          className={`px-2 py-1 rounded font-light disabled:text-gray-300 ${usersFound.count === 0 ? 'cursor-auto' : 'cursor-pointer hover:underline'}`}
-          onClick={createTmp}
-          disabled={usersFound.count === 0}
-        >Create Chat</button>
-        <button
-          className='px-2 py-1 rounded font-light disabled:text-gray-300 hover:underline'
-          onClick={onClose}
-        >Close</button>
-      </div>
-      }
-    </Context.Consumer>
+    <div className='px-2 py-1 font-light self-end'>
+      <button
+        className={`px-2 py-1 rounded font-light disabled:text-gray-300 ${usersFound.count === 0 ? 'cursor-auto' : 'cursor-pointer hover:underline'}`}
+        onClick={createTmp}
+        disabled={usersFound.count === 0}
+      >Create Chat</button>
+      <button
+        className='px-2 py-1 rounded font-light disabled:text-gray-300 hover:underline'
+        onClick={onClose}
+      >Close</button>
+    </div>
   )
 }
 
-const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
-
+const UserLookUp:UserLookUpFC = ({show, isAdding = false, onClose, keyword}) => {
+  const {chat} = useContext<AppContext>(Context)
   const [input, setInput] = useState<string>(keyword ? keyword : '')
   const [usersFound, updateUsersFound] = useReducer(usersFoundReducer,{list:[], count: 0})
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -160,6 +174,11 @@ const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
     if(keyword) setInput(keyword)
   }, [keyword]) 
 
+const closeDialog = () => {
+  setInput('')
+  onClose()
+}
+
   useEffect(() => {
     const removeEnterEvent = mapKeyAndFn('Enter', () => { fetchSearch() })
     const removeEscEvent = mapKeyAndFn('Escape', () => searchRef.current?.blur())
@@ -170,7 +189,7 @@ const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
   }, [input])  
   
   return (
-    <Dialog show={show} onClose={onClose}>
+    <Dialog show={show} onClose={closeDialog}>
       <SearchInput
         input={input}
         searchRef={searchRef}
@@ -182,9 +201,13 @@ const UserLookUp:UserLookUpFC = ({show, onClose, keyword}) => {
         usersFound={usersFound}
         updateUsersFound={updateUsersFound}
       />
+      {isAdding ? <CurrentUsers
+        active={chat.active}
+      /> : null}
       <Footer
+        chat={chat}
         usersFound={usersFound}
-        onClose={onClose}
+        onClose={closeDialog}
       />
     </Dialog>
   )

@@ -28,9 +28,9 @@ const getEvents = (dispatchActiveChat:Dispatch<any>, dispatchChatList:Dispatch<a
     },
     {
       event: 'getChatResponse',
-      handler: (chatId: string, history:Message[]) => {
+      handler: (chatId: string, history:Message[], participants: string[]) => {
         if (!history.length) return
-        dispatchActiveChat({type:'renewChat', chatId, history})
+        dispatchActiveChat({type:'renewChat', chatId, history, participants})
       }
     },
     {

@@ -1,9 +1,8 @@
 import { ObjectId } from 'mongodb'
 import Chat from './models/chat'
 import User from './models/user'
-import { Message } from '../../types/global'
 import { getUserCollection, getChatCollection} from './connection'
-import type { CreateChat } from '../../types/lib/db/chat'
+import type { CreateChat, GetChat } from '../../types/lib/db/chat'
 
 const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
    const timestamp = Date.now() 
@@ -35,7 +34,7 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
     (await userCollection.find({username: {$in: participants}}).toArray()).map(user => user._id)
   
   const chatCollection = await getChatCollection()
-  if (!participantIds.includes(requesterId)) participantIds.push(requesterId)
+  if (!participantIds.find(id => id.equals(requesterId))) participantIds.push(requesterId)
   const timestamp = Date.now()
   const {insertedId} = await chatCollection.insertOne(
     new Chat(participantIds, [{timestamp,sender: requesterId.toString(), message}])
@@ -67,13 +66,13 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   }
 }
 
-const get = async(chatId:ObjectId, userId:ObjectId):Promise<Message[]> => {
+const get = async(chatId:ObjectId, userId:ObjectId):Promise<GetChat> => {
   const chatCollection = await getChatCollection()
   const chat = await chatCollection.findOne({_id: chatId})
 
   if (!chat) throw new Error('Chat - Get: No chat found')
   const cmp = chat.participants.find(p => p.equals(userId))
-  if(cmp === undefined) throw new Error ('Chat - Get: User not included')
+  if(cmp === undefined) throw new Error('Chat - Get: User not included')
 
   const displayNames:Record<string, string> = {}
  
@@ -83,13 +82,16 @@ const get = async(chatId:ObjectId, userId:ObjectId):Promise<Message[]> => {
     displayNames[u._id.toString()] = u.nickname
   })
   
-  return chat.history.map(h => ({
+  return ({
+    participants: participants.map(p => p.nickname),
+    history: chat.history.map(h => ({
       message: h.message,
       sender: displayNames[h.sender.toString()] || 'unknown',
       timestamp: h.timestamp
-  }))
+    }))
+  })
 }
-const removeUser = async (chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean}> => {
+const removeUser = async(chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean}> => {
   const [chatCollection, userCollection] = await Promise.all([getChatCollection(), getUserCollection()])
   const [userCond, chatCond] = [{_id: userId}, {_id: chatId}]
   const [chat, user] = await Promise.all([chatCollection.findOne(chatCond), userCollection.findOne(userCond)])

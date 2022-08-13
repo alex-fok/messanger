@@ -7,6 +7,7 @@ const getEmpty = () => ({
 
 const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => {
   console.log('action:', action)
+  console.log('state: ', state)
   switch(action.type) {
     case 'switchActive': { 
       return {
@@ -51,7 +52,8 @@ const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => 
       if (state.id !== action.chatId) return state
       return {
         ...state,
-        history: action.history
+        history: action.history,
+        participants: action.participants
       }
     }
     case 'deselect': {

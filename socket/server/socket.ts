@@ -24,7 +24,7 @@ const setup = (io: Server) => {
       chatResult.participantIds.forEach(p => {
         const pString = p.toString()
         const emitter = pString === user.id ? socket : io
-        emitter.to(`user_${pString}`).emit('newChat', chatId, chatId)
+        emitter.to(`user_${pString}`).emit('newChat', chatId, chatId, participants)
         io.in(`user_${pString}`).socketsJoin(`chat_${chatId}`)
       })
       socket.emit('createChatResponse', tmpId, chatResult.chatId, chatResult.timestamp)
@@ -41,7 +41,7 @@ const setup = (io: Server) => {
     socket.on('getChat', async(chatId:string) => {
       const result = await Chat.get(new ObjectId(chatId), new ObjectId(user.id)).catch(err => {console.error(err)})
       if (!result) return socket.emit('error', 'Unable to get chat')
-      socket.emit('getChatResponse', chatId, result)
+      socket.emit('getChatResponse', chatId, result.history, result.participants)
     })
     socket.on('removeUser', async(chatId:string) => {
       const result = await Chat.removeUser(new ObjectId(chatId), new ObjectId(user.id))

@@ -12,19 +12,22 @@ export type ExpandBtnFC = FC<{
 }>
 
 export type DMTitleFC = FC<{
-  handleAdd: () => void
+  createChat: () => void
 }>
 export type ChatListBtnsFC = FC<{
   isVisible: boolean,
-  handleSetActive: () => void,
-  handleDelete: () => void
+  setActive: () => void,
+  addUser: () => void,
+  deleteChat: () => void
 }>
 export type ChatItemFC = FC<{
   id: string,
   isSelected:boolean,
-  meta: ChatMeta
+  meta: ChatMeta,
+  addUser: () => void
 }>
 
 export type ChatItemsFC = FC<{
-  chatList: ChatList
+  chatList: ChatList,
+  addUser: () => void
 }>
