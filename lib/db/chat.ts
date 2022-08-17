@@ -2,9 +2,27 @@ import { ObjectId } from 'mongodb'
 import Chat from './models/chat'
 import User from './models/user'
 import { getUserCollection, getChatCollection} from './connection'
-import type { CreateChat, GetChat } from '../../types/lib/db/chat'
+import type {
+  FindChat,
+  AddMessage,
+  CreateChat,
+  GetChat,
+  GetParticipants,
+  RemoveUser,
+  RemoveChat } from '../../types/lib/db/chat'
 
-const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
+const findChat:FindChat = async(chatId: ObjectId, userId: ObjectId) => {
+  const chatCollection = await getChatCollection()
+  const chat = await chatCollection.findOne({_id: chatId})
+
+  if (!chat) throw new Error('Chat - Get: No chat found')
+  const cmp = chat.participants.find(p => p.equals(userId))
+  if(cmp === undefined) throw new Error('Chat - Get: User not included')
+
+  return chat 
+}
+
+const addMessage:AddMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
    const timestamp = Date.now() 
     const userCollection = await getUserCollection()
     const senderInfo = await userCollection.findOne({_id: sender})
@@ -28,7 +46,7 @@ const addMessage = async(sender:ObjectId, chatId:ObjectId, message:string) => {
     return { timestamp, sender: senderInfo.nickname, message }
 }
 
-const create = async(requesterId: ObjectId, participants: string[], message: string) : Promise<CreateChat> => {
+const create:CreateChat = async(requesterId, participants, message) => {
   const userCollection = await getUserCollection()
   const participantIds: ObjectId[] =
     (await userCollection.find({username: {$in: participants}}).toArray()).map(user => user._id)
@@ -66,14 +84,8 @@ const create = async(requesterId: ObjectId, participants: string[], message: str
   }
 }
 
-const get = async(chatId:ObjectId, userId:ObjectId):Promise<GetChat> => {
-  const chatCollection = await getChatCollection()
-  const chat = await chatCollection.findOne({_id: chatId})
-
-  if (!chat) throw new Error('Chat - Get: No chat found')
-  const cmp = chat.participants.find(p => p.equals(userId))
-  if(cmp === undefined) throw new Error('Chat - Get: User not included')
-
+const get:GetChat = async(chatId:ObjectId, userId:ObjectId) => {
+  const chat = await findChat(chatId, userId)
   const displayNames:Record<string, string> = {}
  
   const userCollection = await getUserCollection()
@@ -91,7 +103,17 @@ const get = async(chatId:ObjectId, userId:ObjectId):Promise<GetChat> => {
     }))
   })
 }
-const removeUser = async(chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean}> => {
+
+const getParticipants:GetParticipants = async(chatId:ObjectId, userId:ObjectId) => {
+  const chat = await findChat(chatId, userId)
+  const userCollection = await getUserCollection()
+  const participants = await userCollection.find({_id: {$in: chat.participants}}).toArray()
+  return ({
+    participants: participants.map(p => p.nickname)
+  })
+}
+
+const removeUser:RemoveUser = async(chatId: ObjectId, userId:ObjectId) => {
   const [chatCollection, userCollection] = await Promise.all([getChatCollection(), getUserCollection()])
   const [userCond, chatCond] = [{_id: userId}, {_id: chatId}]
   const [chat, user] = await Promise.all([chatCollection.findOne(chatCond), userCollection.findOne(userCond)])
@@ -114,7 +136,8 @@ const removeUser = async(chatId: ObjectId, userId:ObjectId): Promise<{acknowledg
     acknowledged: ack1 && ack2
   })
 }
-const removeChat = async (chatId: ObjectId, userId:ObjectId): Promise<{acknowledged: boolean, chatId: ObjectId, participants: ObjectId[]}> => {
+
+const removeChat:RemoveChat = async(chatId, userId) => {
   const [chatCollection, userCollection] = await Promise.all([getChatCollection(), getUserCollection()])
   const [userCond, chatCond] = [{_id: userId}, {_id: chatId}]
   const [chat, user] = await Promise.all([chatCollection.findOne(chatCond), userCollection.findOne(userCond)])
@@ -142,6 +165,7 @@ const chat = {
   addMessage,
   create,
   get,
+  getParticipants,
   removeUser,
   removeChat
 }

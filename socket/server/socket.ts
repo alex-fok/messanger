@@ -43,6 +43,11 @@ const setup = (io: Server) => {
       if (!result) return socket.emit('error', 'Unable to get chat')
       socket.emit('getChatResponse', chatId, result.history, result.participants)
     })
+    socket.on('getParticipants', async (chatId:string) => {
+      const result = await Chat.getParticipants(new ObjectId(chatId), new ObjectId(user.id)).catch(err => {console.error(err)})
+      if (!result) return socket.emit('error', 'Unable to get participants')
+      socket.emit('getParticipantsResponse', chatId, result)
+    })
     socket.on('removeUser', async(chatId:string) => {
       const result = await Chat.removeUser(new ObjectId(chatId), new ObjectId(user.id))
       socket.to(`user_${user.id}`).emit('userRemoved', chatId)
