@@ -1,6 +1,6 @@
 import type { Message } from global
 import type { ObjectId } from 'mongodb'
-import type Chat from './models/chat'
+import type { Chat } from './models/chat'
 
 export type FindChat = (chatId:ObjectId, userId:objectId) => Promise<Chat>
 
