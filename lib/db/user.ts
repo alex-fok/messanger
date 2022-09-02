@@ -5,6 +5,7 @@ import User from './models/user'
 import verifyToken from '../auth/verifyToken'
 import promisify from '../../utils/promisify'
 import { getUserCollection, getChatCollection } from './connection'
+import type { ChatMeta } from '../../types/lib/db/user'
 
 const create = async (username:string, password:string, nickname:string):Promise<string> => {
   const userCollection = await getUserCollection()
@@ -33,12 +34,18 @@ const verify = async (jwt: string):Promise<string | null>=> {
 const get = async (username: string) => {
   const userCollection = await getUserCollection()    
   const user = await userCollection.findOne({username}).catch(err => {console.error(err)})
-
-  return user ? {
+  if (!user) return null
+  // ObjectKey[] => String[]
+  const chats:Record<string, ChatMeta> = {}
+  Object.entries(user.chats).forEach(([key, meta]) => {
+    chats[key] = {...meta, participants: meta.participants?.map(p => p.toString()) || []}
+  })
+  
+  return ({
     id:user._id.toString(),
     username: user.username,
-    chats: user.chats || {}
-  } : null
+    chats
+  })
 }
 const getWithJwt = async (jwt: string) => {
   const username = await verify(jwt)

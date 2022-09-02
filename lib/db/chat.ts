@@ -62,7 +62,11 @@ const create:CreateChat = async(requesterId, participants, message) => {
     {_id: {$in: participantIds}},
     { $set: {
       'lastModified': timestamp,
-      [`chats.${insertedId}`]: {name: insertedId.toString(), unread: 1}
+      [`chats.${insertedId}`]: {
+        name: insertedId.toString(),
+        unread: 1,
+        participants: participantIds
+      }
     }}
   )
   const updateSender = userCollection.updateOne(
@@ -93,7 +97,7 @@ const get:GetChat = async(chatId:ObjectId, userId:ObjectId) => {
   participants.forEach((u:User) => {
     displayNames[u._id.toString()] = u.nickname
   })
-  
+ 
   return ({
     participants: participants.map(p => p.nickname),
     history: chat.history.map(h => ({
@@ -108,9 +112,8 @@ const getParticipants:GetParticipants = async(chatId:ObjectId, userId:ObjectId) 
   const chat = await findChat(chatId, userId)
   const userCollection = await getUserCollection()
   const participants = await userCollection.find({_id: {$in: chat.participants}}).toArray()
-  return ({
-    participants: participants.map(p => p.nickname)
-  })
+  return participants.map(p => p.nickname)
+  
 }
 
 const removeUser:RemoveUser = async(chatId: ObjectId, userId:ObjectId) => {

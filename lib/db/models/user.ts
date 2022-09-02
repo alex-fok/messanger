@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import type { ChatMeta, User as UserInterface } from '../../../types/lib/db/models/user'
+import type { ChatMetaDB, User as UserInterface } from '../../../types/lib/db/models/user'
 
 export default class User implements UserInterface {
   constructor(
@@ -7,6 +7,6 @@ export default class User implements UserInterface {
     public password:string,
     public nickname:string,
     public lastModified: number,
-    public chats:Record<string, ChatMeta> = {},
+    public chats:Record<string, ChatMetaDB> = {},
     public _id:ObjectId = new ObjectId()) {}
 }

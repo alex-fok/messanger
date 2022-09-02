@@ -21,7 +21,7 @@ export type GetChat = (chatId:ObjectId, userId:ObjectId) => Promise<{
   participants: string[]
 }>
 
-export type GetParticipants = (chatId:ObjectId, userId:ObjectId) => Promise<{participants: string[]}>
+export type GetParticipants = (chatId:ObjectId, userId:ObjectId) => Promise<string[]>
 
 export type RemoveUser = (chatId:ObjectId, userId:ObjectId) => Promise<{acknowledged: boolean}>
 
