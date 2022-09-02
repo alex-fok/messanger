@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, RefObject, Dispatch } from 'react'
 import type { Chat, AppContext } from '../contexts/app'
 import type { UsersFoundState, UsersFoundAction } from '../reducers/usersFoundReducer'
-import type { ActiveChat, ChatAction } from '../reducers/activeChatReducer'
+import type { ChatMeta, ChatList } from '../reducers/chatlistReducer'
 export type AppContext = AppContext
 
 export type UsersFoundListFC = FC<{
@@ -13,6 +13,7 @@ export type UsersFoundListFC = FC<{
 export type UserLookUpFC = FC<{
   show: boolean,
   isAdding?: boolean,
+  chatId?: string,
   onClose: () => void,
   keyword?: string
 }>
@@ -30,7 +31,8 @@ export type SearchInputFC = FC<{
 }>
 
 export type CurrentUsersFC = FC<{
-  active: ActiveChat
+  username:string,
+  currentChat: ChatMeta | undefined
 }>
 
 export type FooterFC = FC<{

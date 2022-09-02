@@ -10,10 +10,6 @@ const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
       state.items.set(action.notified, updated)
       return {...state}
     }
-    case 'newChat': {
-      state.items.set(action.chatId, {name: action.name, unread: 1})
-      return {...state}
-    }
     case 'setActive': {
       if (state.selected === action.chatId) return state 
       state.selected = action.chatId
@@ -24,14 +20,21 @@ const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
       state.items.delete(action.chatId)
       return {...state}
     }
-    case 'rename': {
-      state.items.set(action.chatId, {name: action.name, unread: 0})
+    case 'reassignId': {
+      state.items.set(action.chatId, state.items.get(action.tmpId) || {name: action.name, unread: 0, participants:[]})
       state.items.delete(action.tmpId)
       if(state.selected === action.tmpId) state.selected = action.chatId 
       return {...state}
     }
+    case 'updateParticipants': {
+      const chat = state.items.get(action.chatId)
+      if (!chat) return {...state}
+      chat.participants = action.participants
+      state.items.set(action.chatId, chat)
+      return {...state}
+    }
     case 'addTmpChat': {
-      state.items.set(action.tmpId, {name: '(new)', unread: 0})
+      state.items.set(action.tmpId, {name: action.participants.join(','), unread: 0, participants: action.participants})
       state.selected = action.tmpId
       return {...state}
     }

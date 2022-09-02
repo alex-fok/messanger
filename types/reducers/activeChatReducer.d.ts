@@ -28,10 +28,7 @@ export type ChatAction = {
   participants: string[],
   tmpId: string
 } | {
-  type: 'addParticipants',
-  chatId: string
-} | {
-  type: 'renewChat',
+  type: 'updateChat',
   chatId: string,
   history: Message[],
   participants: string[]

@@ -15,7 +15,7 @@ import type {
 
 let _deleting:string
 
-const ChatListBtns:ChatListBtnsFC = ({isVisible, setActive, addUser, deleteChat}) => {
+const ChatListBtns:ChatListBtnsFC = ({isVisible, setActive, addUser: addUser, deleteChat}) => {
   return (
     <div className={`flex flex-row justify-between px-6 ${isVisible ? 'visible' : 'invisible'}`}>
       <Button
@@ -74,11 +74,10 @@ const DMTitle:DMTitleFC = ({createChat}) => {
   )
 }
 
-const ChatListItem:ChatItemFC = ({id, isSelected, meta, addUser}) => {
+const ChatListItem:ChatItemFC = ({id, isSelected, meta, showAddUser}) => {
   const [isBtnsVisible, setIsBtnsVisible] = useState(false)
   const {chat, socket} = useContext(AppContext)
   const [dispatchActive, dispatchList] = useMemo(() => [chat.dispatchActive, chat.dispatchList], [chat])
-  
   const setActive = useCallback(() => {
     if(_deleting === id) return
     dispatchList({type: 'setActive', chatId: id})
@@ -92,6 +91,10 @@ const ChatListItem:ChatItemFC = ({id, isSelected, meta, addUser}) => {
     socket.emit('removeChat', id)
   }, [dispatchActive, dispatchList])
 
+  const addUser = useCallback(() => {
+    socket.emit('getParticipants', id)
+    showAddUser(id)
+  }, [showAddUser])
   useEffect(() => { setIsBtnsVisible(isSelected) }, [isSelected])
 
   return (
@@ -123,7 +126,7 @@ const ChatListItem:ChatItemFC = ({id, isSelected, meta, addUser}) => {
   )
 }
 
-const ChatList:ChatItemsFC = ({chatList, addUser}) => {
+const ChatList:ChatItemsFC = ({chatList, showAddUser}) => {
   const chatArray = useMemo(() => Array.from(chatList.items.entries()).reverse(), [chatList])
  
   return (
@@ -134,7 +137,7 @@ const ChatList:ChatItemsFC = ({chatList, addUser}) => {
           id={id}
           meta={properties}
           isSelected={chatList.selected === id}
-          addUser={addUser}
+          showAddUser={showAddUser}
         /> 
       )}
     </ul>
@@ -142,16 +145,17 @@ const ChatList:ChatItemsFC = ({chatList, addUser}) => {
 }
 
 const SideNav:SideNavFC = ({chatList}) => {
-  const [userSearch, setUserSearch] = useState({isSearching: false, isAdding: false})
-  const createChat = useCallback(() => setUserSearch({isSearching: true, isAdding: false}), [setUserSearch])
-  const addUser = useCallback(() => setUserSearch({isSearching: true, isAdding: true}), [setUserSearch])
+  const [userSearch, setUserSearch] = useState({isSearching: false, isAdding: false, chatId: ''})
+  const createChat = useCallback(() => setUserSearch({isSearching: true, isAdding: false, chatId: ''}), [setUserSearch])
+  const showAddUser = useCallback((chatId:string) => { setUserSearch({isSearching: true, isAdding: true, chatId})}, [setUserSearch])
 
   return (
     <>
       <UserLookUp
         show={userSearch.isSearching}
         isAdding={userSearch.isAdding}
-        onClose={() => { setUserSearch({isSearching: false, isAdding: false}) }}
+        chatId={userSearch.chatId}
+        onClose={() => { setUserSearch({isSearching: false, isAdding: false, chatId: ''}) }}
       />
       <nav className='w-44 ml-4 lg:ml-12 px-2 h-full'>
         <Selections />
@@ -159,7 +163,7 @@ const SideNav:SideNavFC = ({chatList}) => {
         <details open className='h-3/4 pb-24 cursor-default'>
           <DMTitle createChat={createChat} />
           <ChatList
-            addUser={addUser}
+            showAddUser={showAddUser}
             chatList={chatList}/>
         </details>
       </nav>

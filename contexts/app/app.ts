@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { AppContext } from '../../types/contexts/app'
+import type { AppContext, ChatList } from '../../types/contexts/app'
 import io from 'socket.io-client'
 
 export default createContext<AppContext>({
@@ -14,7 +14,11 @@ export default createContext<AppContext>({
     active: {
       id: '-1',
       history: [],
-      participants:[]
+      participants:[],
+    },
+    list: {
+      items: new Map(),
+      selected:''
     },
     dispatchActive: () => {},
     dispatchList: () => {},

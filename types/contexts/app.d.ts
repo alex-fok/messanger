@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react'
-import type { Message } from '../global'
 import type { ActiveChat, ChatAction } from '../reducers/activeChatReducer'
 import type { ChatList, ChatListAction } from '../reducers/chatlistReducer'
 import type { Socket } from 'socket.io-client'
@@ -13,8 +12,11 @@ type User = {
   username: string
 }
 
+export type ChatList = ChatList
+
 export type Chat = {
   active: ActiveChat,
+  list: ChatList,
   dispatchActive: Dispatch<ChatAction>,
   dispatchList: Dispatch<ChatListAction>,
 }

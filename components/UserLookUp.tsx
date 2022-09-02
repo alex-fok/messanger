@@ -92,19 +92,20 @@ const UsersFoundList:UsersFoundListFC = ({isLoading, usersFound, updateUsersFoun
   )
 }
 
-const CurrentUsers: CurrentUsersFC = ({active}) => {
+const CurrentUsers: CurrentUsersFC = ({username, currentChat}) => {
+  if (!currentChat) return null
   return (
     <>
       <div className='font-light text-sm mb-2'>Added Users:</div>
         <div className='flex ml-2'>
-        { active.participants.map(user => 
+        { currentChat.participants.filter(p => p !== username).map(user => 
           <div
             key={user}
             className='border border-gray-400 px-2 py-1 m-1 rounded text-xs font-light'
           >{user}
           </div>
         )}
-        </div>
+      </div>
     </>
   ) 
 }
@@ -118,13 +119,15 @@ const Footer:FooterFC = ({chat, usersFound, onClose}) => {
 
   const createTmp = () => {
     const tmpId = `tmp_${getNewVal()}`
+    const participants = [user.username, ...usersFound.list.filter(users => users.added).map(users => users.username)]
     dispatchActive({
       type:'createTmp',
-      participants: [user.username, ...usersFound.list.filter(users => users.added).map(users => users.username)],
+      participants,
       tmpId
     })
     dispatchList({
       type:'addTmpChat',
+      participants,
       tmpId
     })
     onClose()
@@ -145,8 +148,8 @@ const Footer:FooterFC = ({chat, usersFound, onClose}) => {
   )
 }
 
-const UserLookUp:UserLookUpFC = ({show, isAdding = false, onClose, keyword}) => {
-  const {chat} = useContext<AppContext>(Context)
+const UserLookUp:UserLookUpFC = ({show, isAdding = false, chatId, onClose, keyword}) => {
+  const {chat, user} = useContext<AppContext>(Context)
   const [input, setInput] = useState<string>(keyword ? keyword : '')
   const [usersFound, updateUsersFound] = useReducer(usersFoundReducer,{list:[], count: 0})
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -201,8 +204,9 @@ const closeDialog = () => {
         usersFound={usersFound}
         updateUsersFound={updateUsersFound}
       />
-      {isAdding ? <CurrentUsers
-        active={chat.active}
+      {isAdding && chatId ? <CurrentUsers
+        username={user.username}
+        currentChat={chat.list.items.get(chatId)}
       /> : null}
       <Footer
         chat={chat}

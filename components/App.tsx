@@ -37,6 +37,7 @@ const App:FC<{data:Data}> = ({data}) => {
     },
     chat: {
       active: activeChat,
+      list: chatList,
       dispatchActive: dispatchActiveChat,
       dispatchList: dispatchChatList,
     },

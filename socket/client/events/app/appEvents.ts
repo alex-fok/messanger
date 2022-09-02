@@ -1,16 +1,18 @@
 import { Dispatch } from "react"
 import type { Message } from '../../../../types/global'
+import type { ChatListAction } from '../../../../types/reducers/chatlistReducer'
+import type { ChatAction } from '../../../../types/reducers/activeChatReducer'
 
 type EventHandlers = {
   event: string,
   handler: (...args:any[]) => void
 }
-const getEvents = (dispatchActiveChat:Dispatch<any>, dispatchChatList:Dispatch<any>):EventHandlers[] => {
+const getEvents = (dispatchActiveChat:Dispatch<ChatAction>, dispatchChatList:Dispatch<ChatListAction>):EventHandlers[] => {
   return [
     {
       event: 'createChatResponse',
       handler: (tmpId:string, chatId:string, timestamp:number) => {
-        dispatchChatList({type: 'rename', tmpId, chatId, name: chatId})
+        dispatchChatList({type: 'reassignId', tmpId, chatId, name: chatId})
         dispatchActiveChat({type: 'createChat', tmpId, chatId, timestamp})
       }
     },
@@ -30,7 +32,13 @@ const getEvents = (dispatchActiveChat:Dispatch<any>, dispatchChatList:Dispatch<a
       event: 'getChatResponse',
       handler: (chatId: string, history:Message[], participants: string[]) => {
         if (!history.length) return
-        dispatchActiveChat({type:'renewChat', chatId, history, participants})
+        dispatchActiveChat({type:'updateChat', chatId, history, participants})
+      }
+    },
+    {
+      event: 'getParticipantsResponse',
+      handler: (chatId: string, participants:string[]) => {
+        dispatchChatList({type:'updateParticipants', chatId, participants})
       }
     },
     {
@@ -38,12 +46,6 @@ const getEvents = (dispatchActiveChat:Dispatch<any>, dispatchChatList:Dispatch<a
       handler: (chatId:string) => {
         dispatchChatList({type: 'deleteChat', chatId})
         dispatchActiveChat({type: 'deselect', chatId})
-      }
-    },
-    {
-      event: 'newChat',
-      handler: (chatId:string, name:string) => {
-        dispatchChatList({type:'newChat', chatId, name})
       }
     },
     {

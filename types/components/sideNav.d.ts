@@ -22,12 +22,12 @@ export type ChatListBtnsFC = FC<{
 }>
 export type ChatItemFC = FC<{
   id: string,
-  isSelected:boolean,
+  isSelected: boolean,
   meta: ChatMeta,
-  addUser: () => void
+  showAddUser: (chatId:string) => void
 }>
 
 export type ChatItemsFC = FC<{
   chatList: ChatList,
-  addUser: () => void
+  showAddUser: (chatId:string) => void
 }>

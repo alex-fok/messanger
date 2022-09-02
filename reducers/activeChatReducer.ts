@@ -48,7 +48,7 @@ const activeChatReducer = (state: ActiveChat, action: ChatAction):ActiveChat => 
         tmpId: action.tmpId
       }
     }
-    case 'renewChat': {
+    case 'updateChat': {
       if (state.id !== action.chatId) return state
       return {
         ...state,

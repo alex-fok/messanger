@@ -1,7 +1,8 @@
 import type {Message} from '../contexts/app'
 type Chat = { 
   unread: number,
-  name: string
+  name: string,
+  participants: string[]
 }
 export type Message = Message
 export type Data = {
