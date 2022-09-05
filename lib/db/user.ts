@@ -5,9 +5,17 @@ import User from './models/user'
 import verifyToken from '../auth/verifyToken'
 import promisify from '../../utils/promisify'
 import { getUserCollection, getChatCollection } from './connection'
-import type { ChatMeta } from '../../types/lib/db/user'
+import type {
+  ChatMeta,
+  Create,
+  Verify,
+  Get,
+  GetWithJwt,
+  Search,
+  GetChats
+} from '../../types/lib/db/user'
 
-const create = async (username:string, password:string, nickname:string):Promise<string> => {
+const create:Create = async (username:string, password:string, nickname:string) => {
   const userCollection = await getUserCollection()
   if(await userCollection.findOne({username})) throw new Error('Username already existed')
 
@@ -23,7 +31,7 @@ const create = async (username:string, password:string, nickname:string):Promise
   
 }
 
-const verify = async (jwt: string):Promise<string | null>=> {
+const verify:Verify = async (jwt: string) => {
   const verified = await verifyToken(jwt).catch(()=>{})
   if (!verified) return null
 
@@ -31,7 +39,7 @@ const verify = async (jwt: string):Promise<string | null>=> {
   return username
 }
 
-const get = async (username: string) => {
+const get:Get = async (username: string) => {
   const userCollection = await getUserCollection()    
   const user = await userCollection.findOne({username}).catch(err => {console.error(err)})
   if (!user) return null
@@ -47,20 +55,20 @@ const get = async (username: string) => {
     chats
   })
 }
-const getWithJwt = async (jwt: string) => {
+const getWithJwt:GetWithJwt = async (jwt: string) => {
   const username = await verify(jwt)
   if (!username) return null 
   const result = await get(username)
   return result
 }
-const search = async(username:string) => {
+const search:Search = async(username:string) => {
   const userCollection = await getUserCollection()  
   const result = await userCollection.findOne({username})
 
   return result
 }
 
-const getChats = async (username:string) => {
+const getChats:GetChats = async (username:string) => {
   const [userCollection, chatCollection] = await Promise.all([getUserCollection(), getChatCollection()])
   const user = await userCollection.findOne({username})
   const chatArray = await chatCollection.find({
