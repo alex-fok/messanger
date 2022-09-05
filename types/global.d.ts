@@ -7,11 +7,17 @@ export type Message = {
 }
 
 export interface ChatMeta {
-  name:string,
-  unread:number,
+  name: string,
+  unread: number,
   participants: string[]
 }
 
 export interface ChatMetaDB extends ChatMeta {
   participants: ObjectId[]
+}
+
+export type User = {
+  username: string,
+  id: string,
+  chats: Record<string,ChatMeta>
 }
