@@ -1,10 +1,9 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import type {Payload, ServerSideProps} from '../types/pages'
-import React, { FC } from 'react'
-
 import getJwtPayload from '../lib/auth/getJwtPayload'
 import dbUser from '../lib/db/user'
 import App from '../components/App'
+import type { FC } from 'react'
 
 export async function getServerSideProps(context:GetServerSidePropsContext):Promise<ServerSideProps> {
   const payload:Payload = await getJwtPayload(context.req.headers.cookie)

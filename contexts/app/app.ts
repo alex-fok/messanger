@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { AppContext, ChatList } from '../../types/contexts/app'
+import type { AppContext } from '../../types/contexts/app'
 import io from 'socket.io-client'
 
 export default createContext<AppContext>({
