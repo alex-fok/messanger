@@ -1,14 +1,14 @@
-import type { Data } from '../types/components/app'
-import { FC, useMemo, useReducer, useState } from 'react'
-import { setSocket, setSocketEventHandlers } from '../socket/client/socket'
-import { chatListReducer, activeChatReducer } from '../reducers'
-import Chat from './Chat'
-import Layout from './Layout'
-import SideNav from './SideNav'
-import Context from '../contexts/app'
-import getSocketEvents from '../socket/client/events/app'
+import { useMemo, useReducer, useState } from 'react'
+import { setSocket, setSocketEventHandlers } from '../../socket/client/socket'
+import { chatListReducer, activeChatReducer } from '../../reducers'
+import Chat from '../Chat'
+import Layout from '../Layout'
+import SideNav from '../SideNav'
+import AppContext from '../../contexts/app'
+import getSocketEvents from '../../socket/client/events/app'
+import type { AppFC } from '../../types/components/app'
 
-const App:FC<{data:Data}> = ({data}) => {
+const App:AppFC = ({data}) => {
   const jwt = useMemo(() => data.jwt, [data])
   const socket = useMemo(() => setSocket(jwt), [jwt])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -44,14 +44,14 @@ const App:FC<{data:Data}> = ({data}) => {
     socket
   }
   return (
-    <Context.Provider value={defaultValue}>
+    <AppContext.Provider value={defaultValue}>
       <Layout>
         <SideNav chatList={chatList} />
         <Chat selected={defaultValue.chat.active} />
       </Layout>
-    </Context.Provider>
+    </AppContext.Provider>
   )
-
 }
 
 export default App
+

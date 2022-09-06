@@ -1,8 +1,7 @@
 import { ChangeEvent, FC, RefObject, Dispatch } from 'react'
-import type { Chat, AppContext } from '../contexts/app'
+import type { Chat } from '../contexts/app'
 import type { UsersFoundState, UsersFoundAction } from '../reducers/usersFoundReducer'
 import type { ChatMeta, ChatList } from '../reducers/chatlistReducer'
-export type AppContext = AppContext
 
 export type UsersFoundListFC = FC<{
   isLoading: boolean

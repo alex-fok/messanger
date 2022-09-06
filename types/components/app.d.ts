@@ -1,12 +1,10 @@
-import type {Message} from '../contexts/app'
-type Chat = { 
-  unread: number,
-  name: string,
-  participants: string[]
-}
-export type Message = Message
-export type Data = {
+import type { FC } from 'react'
+import type { ChatMeta } from '../global'
+
+type Data = {
   username: string,
   jwt:string,
-  chats: Record<string, Chat>
+  chats: Record<string, ChatMeta>
 }
+
+export type AppFC = FC<{data:Data}>

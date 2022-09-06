@@ -1,5 +1,6 @@
-import { FC, FormEventHandler, useState } from 'react'
-import { ActiveChatType, Message } from '../contexts/app'
+import type { FC, FormEventHandler } from 'react'
+import type { ActiveChatType, Message } from '../contexts/app'
+
 export type ChatFC = FC<{
   selected:ActiveChatType
 }>

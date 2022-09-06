@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useRef, useState, useCallback, useContext } from 'react'
-import mapKeyAndFn from '../utils/htmlElements/mapKeyAndFn'
-import UserLookUp from './UserLookUp'
-import Context from '../contexts/app'
-import type { AppContext } from '../types/components/navbar'
+import mapKeyAndFn from '../../utils/htmlElements/mapKeyAndFn'
+import UserLookUp from '../UserLookUp'
+import Context from '../../contexts/app'
+import type { NavbarFC } from '../../types/components/navbar'
 
-const Navbar = () => {
-  const {search} = useContext<AppContext>(Context)
+const Navbar:NavbarFC = () => {
+  const {search} = useContext(Context)
   const {keyword, setKeyword} = search
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [isSearchFocused, setSearchFocused] = useState<boolean>(false)
@@ -75,4 +75,5 @@ const Navbar = () => {
     </>
   )
 }
+
 export default Navbar

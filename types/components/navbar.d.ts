@@ -1,3 +1,3 @@
-import type {AppContext} from '../contexts/app'
+import { FC } from 'react'
 
-export type AppContext = AppContext
+export type NavbarFC = FC

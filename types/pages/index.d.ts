@@ -1,7 +1,4 @@
-type ChatsType = {
-  unread: number,
-  name: string
-}
+import { ChatMeta } from '../global'
 
 export type Payload = {
   username: string,
@@ -13,7 +10,7 @@ export type ServerSideProps = {
     data: {
       username: string,
       jwt:string,
-      chats: Record<string, ChatsType>
+      chats: Record<string, ChatMeta>
     }
   }
 } | {
