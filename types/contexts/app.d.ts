@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
-import type { ActiveChat, ChatAction } from '../reducers/activeChatReducer'
-import type { ChatList, ChatListAction } from '../reducers/chatlistReducer'
+import type { ActiveChat, ChatAction } from 'types/reducers/activeChatReducer'
+import type { ChatList, ChatListAction } from 'types/reducers/chatlistReducer'
 import type { Socket } from 'socket.io-client'
 
 type Search = {

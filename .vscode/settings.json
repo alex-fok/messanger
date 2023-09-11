@@ -2,5 +2,6 @@
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false,
-  "editor.acceptSuggestionOnCommitCharacter": false
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "vim.useCtrlKeys": false
 }

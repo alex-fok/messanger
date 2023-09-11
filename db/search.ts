@@ -1,5 +1,5 @@
 import connectToDB from './mongodb'
-import type { SearchReturn } from '../../types/lib/db/search'
+import type { SearchReturn } from 'types/db/search'
 
 const search = async({name, $or}:{name: string, $or: string[]}, keyword: string) : Promise<SearchReturn> => {
   const client = await connectToDB()

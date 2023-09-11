@@ -1,6 +1,6 @@
 import type { FC, MouseEventHandler } from 'react'
-import type { ChatList } from '../reducers/chatlistReducer'
-import type { ChatMeta } from '../global'
+import type { ChatList } from 'types/reducers/chatlistReducer'
+import type { ChatMeta } from 'types/global'
 
 export type SideNavFC = FC<{
   chatList: ChatList

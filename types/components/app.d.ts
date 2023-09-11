@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import type { ChatMeta } from '../global'
+import type { ChatMeta } from 'types/global'
 
 type Data = {
   username: string,

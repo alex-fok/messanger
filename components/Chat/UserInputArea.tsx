@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import mapKeyAndFn from '../../utils/htmlElements/mapKeyAndFn'
+import mapKeyAndFn from 'utils/htmlElements/mapKeyAndFn'
 
-import type { UserInputAreaFC } from "../../types/components/chat"
+import type { UserInputAreaFC } from "types/components/chat"
 
 const UserInputArea:UserInputAreaFC = ({userInputHandler, message, sendMessage}) => {
   useEffect(() => mapKeyAndFn('Enter', sendMessage), [sendMessage])

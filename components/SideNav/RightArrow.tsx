@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import type { ExpandBtnFC } from '../../types/components/sideNav'
+import type { ExpandBtnFC } from 'types/components/sideNav'
 
 const RightArrow:ExpandBtnFC = ({className, isExpanded}) => {
   return (

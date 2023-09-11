@@ -1,4 +1,4 @@
-import { Message } from '../global'
+import { Message } from 'types/global'
 export type ActiveChat = {
   id: string,
   history: Message[],

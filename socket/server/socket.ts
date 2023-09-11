@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import User from '../../lib/db/user'
+import User from 'db/user'
 import getEvents from './events'
 
 const setup = (io: Server) => {

@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb'
-import { User, ChatMeta } from '../../global'
-import { User as UserDB } from '../db/models/user'
-import { Chat as ChatDB } from '../db/models/chat'
+import { User, ChatMeta } from 'types/global'
+import { User as UserDB } from './models/user'
+import { Chat as ChatDB } from './models/chat'
 
 export type ChatMeta = ChatMeta
 

@@ -9,7 +9,7 @@ import type {
   GetChat,
   GetParticipants,
   RemoveUser,
-  RemoveChat } from '../../types/lib/db/chat'
+  RemoveChat } from '../types/db/chat'
 
 const findChat:FindChat = async(chatId: ObjectId, userId: ObjectId) => {
   const chatCollection = await getChatCollection()

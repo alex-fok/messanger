@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import type { UserActionIconFC } from '../../types/components/userLookup'
+import type { UserActionIconFC } from 'types/components/userLookup'
 
 const UserActionIcon:UserActionIconFC = ({type, action}) => {
   switch(type) {

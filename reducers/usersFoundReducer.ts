@@ -1,4 +1,4 @@
-import type { UsersFoundState, UsersFoundAction } from "../types/reducers/usersFoundReducer"
+import type { UsersFoundState, UsersFoundAction } from "types/reducers/usersFoundReducer"
 
 export const usersFoundReducer = (state:UsersFoundState, action:UsersFoundAction):UsersFoundState => {
   switch (action.type) {

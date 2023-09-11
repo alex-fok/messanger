@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Button from '../common/Button'
-import type { ChatListBtnsFC } from '../../types/components/sideNav'
+import Button from 'components/common/Button'
+import type { ChatListBtnsFC } from 'types/components/sideNav'
 
 const ChatListBtns:ChatListBtnsFC = ({isVisible, setActive, addUser: addUser, deleteChat}) => {
   return (

@@ -1,12 +1,12 @@
 import { useMemo, useReducer, useState } from 'react'
-import { setSocket, setSocketEventHandlers } from '../../socket/client/socket'
-import { chatListReducer, activeChatReducer } from '../../reducers'
-import Chat from '../Chat'
-import Layout from '../Layout'
-import SideNav from '../SideNav'
-import AppContext from '../../contexts/app'
-import getSocketEvents from '../../socket/client/events/app'
-import type { AppFC } from '../../types/components/app'
+import { setSocket, setSocketEventHandlers } from 'socket/client/socket'
+import { chatListReducer, activeChatReducer } from 'reducers'
+import Chat from 'components/Chat'
+import Layout from 'components/Layout'
+import SideNav from 'components/SideNav'
+import AppContext from 'contexts/app'
+import getSocketEvents from 'socket/client/events/app'
+import type { AppFC } from 'types/components/app'
 
 const App:AppFC = ({data}) => {
   const jwt = useMemo(() => data.jwt, [data])

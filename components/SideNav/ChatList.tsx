@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback, useEffect, useContext } from 'react'
 import RightArrow from './RightArrow'
 import ChatListBtns from './ChatListBtns'
-import AppContext from '../../contexts/app'
-import type { ChatItemFC, ChatItemsFC } from '../../types/components/sideNav'
+import AppContext from 'contexts/app'
+import type { ChatItemFC, ChatItemsFC } from 'types/components/sideNav'
 
 const ChatListItem:ChatItemFC = ({id, isSelected, meta, showAddUser}) => {
   const [isBtnsVisible, setIsBtnsVisible] = useState(false)

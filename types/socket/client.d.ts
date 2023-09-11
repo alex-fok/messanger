@@ -1,6 +1,6 @@
-export type { Message } from '../global'
-export type { ChatListAction } from '../reducers/chatlistReducer'
-export type { ChatAction } from '../reducers/activeChatReducer'
+export type { Message } from 'types/global'
+export type { ChatListAction } from 'types/reducers/chatlistReducer'
+export type { ChatAction } from 'types/reducers/activeChatReducer'
 
 export type EventHandlers = {
   event: 'createChatRes',

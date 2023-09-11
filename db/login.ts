@@ -1,7 +1,7 @@
-import serializeToken from '../auth/serializeToken'
+import serializeToken from 'auth/serializeToken'
 import connectToDB from './mongodb'
 import crypto from 'crypto'
-import promisify from '../../utils/promisify'
+import promisify from 'utils/promisify'
 
 const login = async (username: string, password: string):Promise<{jwt:string}> => {
   const client = await connectToDB()

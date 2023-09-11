@@ -1,4 +1,4 @@
-import type { ActiveChat, ChatAction } from '../types/reducers/activeChatReducer'
+import type { ActiveChat, ChatAction } from 'types/reducers/activeChatReducer'
 const getEmpty = () => ({
   id: '',
   history: [],

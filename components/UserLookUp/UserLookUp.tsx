@@ -1,13 +1,13 @@
 import { useContext, useState, useReducer, useEffect, useCallback, useRef } from 'react'
-import Dialog from '../common/Dialog'
+import Dialog from 'components/common/Dialog'
 import SearchInput from './SearchInput'
 import UsersFoundList from './UsersFoundList'
 import CurrentUsers from './CurrentUsers'
 import Footer from './Footer'
-import AppContext from '../../contexts/app'
-import { usersFoundReducer } from '../../reducers/usersFoundReducer'
-import mapKeyAndFn from '../../utils/htmlElements/mapKeyAndFn'
-import type { UserLookUpFC } from '../../types/components/userLookup'
+import AppContext from 'contexts/app'
+import { usersFoundReducer } from 'reducers/usersFoundReducer'
+import mapKeyAndFn from 'utils/htmlElements/mapKeyAndFn'
+import type { UserLookUpFC } from 'types/components/userLookup'
 
 const UserLookUp:UserLookUpFC = ({show, isAdding = false, chatId, onClose, keyword}) => {
   const {chat, user} = useContext(AppContext)

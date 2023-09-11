@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UserActionIcon from './UserActionIcon'
-import type { UsersFoundListFC } from '../../types/components/userLookup'
+import type { UsersFoundListFC } from 'types/components/userLookup'
 
 const UsersFoundList:UsersFoundListFC = ({isLoading, usersFound, updateUsersFound}) => {
   const userslist =

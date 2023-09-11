@@ -1,8 +1,8 @@
 import { Socket, Server } from 'socket.io'
-import Chat from '../../../lib/db/chat'
+import Chat from 'db/chat'
 import { ObjectId } from 'mongodb'
 
-import type { User, EventHandlers } from '../../../types/socket/server'
+import type { User, EventHandlers } from 'types/socket/server'
 
 const getEvents = (socket:Socket, io: Server, user:User):EventHandlers[] => [
   {

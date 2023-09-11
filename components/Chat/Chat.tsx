@@ -1,11 +1,11 @@
 import { FormEventHandler, useContext, useState, useMemo } from 'react'
-import autoResizeTextArea from '../../utils/htmlElements/autoResizeTextArea'
-import AppContext from '../../contexts/app'
+import autoResizeTextArea from 'utils/htmlElements/autoResizeTextArea'
+import AppContext from 'contexts/app'
 import ChatContainer from './ChatContainer'
 import ChatHistory from './ChatHistory'
 import ChatOptions from './ChatOptions'
 import UserInputArea from './UserInputArea'
-import type { ChatFC } from '../../types/components/chat'
+import type { ChatFC } from 'types/components/chat'
 
 const Chat:ChatFC = ({selected}) => {
   const [message, setMessage] = useState<string>('')

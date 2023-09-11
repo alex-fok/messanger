@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SearchInputFC } from '../../types/components/userLookup'
+import { SearchInputFC } from 'types/components/userLookup'
 
 const SearchInput:SearchInputFC = ({input, searchRef, changeInput, fetchSearch}) => 
   <>

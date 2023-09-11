@@ -1,6 +1,6 @@
 
 import { ObjectId } from 'mongodb'
-import { Chat as ChatInterface, Message } from '../../../types/lib/db/models/chat'
+import { Chat as ChatInterface, Message } from 'types/db/models/chat'
 
 export default class Chat implements ChatInterface {
   constructor(

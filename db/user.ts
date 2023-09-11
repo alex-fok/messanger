@@ -2,8 +2,8 @@ import { JwtPayload } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import User from './models/user'
-import verifyToken from '../auth/verifyToken'
-import promisify from '../../utils/promisify'
+import verifyToken from 'auth/verifyToken'
+import promisify from 'utils/promisify'
 import { getUserCollection, getChatCollection } from './connection'
 import type {
   ChatMeta,
@@ -13,7 +13,7 @@ import type {
   GetWithJwt,
   Search,
   GetChats
-} from '../../types/lib/db/user'
+} from 'types/db/user'
 
 const create:Create = async (username:string, password:string, nickname:string) => {
   const userCollection = await getUserCollection()

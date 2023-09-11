@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import validate, { Rule } from '../utils/validateInput'
+import validate, { Rule } from 'utils/validateInput'
 
 const useValidate = (name: string, init: string, options: Rule[] ):
 [string, Dispatch<SetStateAction<string>>, boolean, string] => {

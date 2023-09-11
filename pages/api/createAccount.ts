@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import User from '../../lib/db/user'
-import serializeToken from '../../lib/auth/serializeToken'
-import validateInput from '../../utils/validateInput'
+import User from 'db/user'
+import serializeToken from 'auth/serializeToken'
+import validateInput from 'utils/validateInput'
 
 const createAccount = async (req:NextApiRequest, res: NextApiResponse) => {
   const {username, password, nickname} = req.body

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import dbLogin from '../../lib/db/login'
+import dbLogin from 'db/login'
 
 const login = async (req:NextApiRequest, res:NextApiResponse) => {
   try {

@@ -5,9 +5,9 @@ import axios from 'axios'
 import Router from 'next/router'
 import Head from 'next/head'
 import cookie from 'cookie'
-import User from '../lib/db/user'
-import { FormContent, Field } from '../types/form'
-import validateInput from '../utils/validateInput'
+import User from 'db/user'
+import { FormContent, Field } from 'types/form'
+import validateInput from 'utils/validateInput'
 
 export async function getServerSideProps(context:GetServerSidePropsContext) {
   const {jwt} = cookie.parse(context.req.headers?.cookie || '')

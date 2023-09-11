@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import dbSearch from '../../lib/db/search'
-import getJwtPayload from '../../lib/auth/getJwtPayload'
+import dbSearch from 'db/search'
+import getJwtPayload from 'auth/getJwtPayload'
 
 type SearchRequestBody = {
   type: string,

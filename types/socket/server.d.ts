@@ -1,4 +1,4 @@
-export type { User } from '../global'
+export type { User } from 'types/global'
 
 export type EventHandlers = {
   event: 'createChat',

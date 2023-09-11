@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { ChatMetaDB } from '../../../global'
+import { ChatMetaDB } from 'types/global'
 
 interface User {
   username:string,

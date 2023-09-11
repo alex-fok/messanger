@@ -3,7 +3,7 @@ import UserLookUp from '../UserLookUp'
 import Selections from './Selections'
 import DMTitle from './DMTitle'
 import ChatList from './ChatList'
-import type { SideNavFC } from '../../types/components/sideNav'
+import type { SideNavFC } from 'types/components/sideNav'
 
 const SideNav:SideNavFC = ({chatList}) => {
   const [userSearch, setUserSearch] = useState({isSearching: false, isAdding: false, chatId: ''})

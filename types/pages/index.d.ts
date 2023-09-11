@@ -1,4 +1,4 @@
-import { ChatMeta } from '../global'
+import { ChatMeta } from 'types/global'
 
 export type Payload = {
   username: string,

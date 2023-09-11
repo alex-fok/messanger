@@ -1,4 +1,4 @@
-import { ButtonFC } from "../../types/components/comm/button"
+import { ButtonFC } from "types/components/comm/button"
 
 const Button:ButtonFC = ({children, className, onClick}) => {
   return (

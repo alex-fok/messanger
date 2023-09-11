@@ -1,4 +1,4 @@
-import type { CurrentUsersFC } from '../../types/components/userLookup'
+import type { CurrentUsersFC } from 'types/components/userLookup'
 
 const CurrentUsers: CurrentUsersFC = ({username, currentChat}) => {
   if (!currentChat) return null

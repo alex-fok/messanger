@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react'
-import AppContext from '../../contexts/app'
-import { getNewVal } from '../../utils/valGenerator'
-import type { FooterFC } from '../../types/components/userLookup'
+import AppContext from 'contexts/app'
+import { getNewVal } from 'utils/valGenerator'
+import type { FooterFC } from 'types/components/userLookup'
 
 const Footer:FooterFC = ({chat, usersFound, onClose}) => {
   const {user} = useContext(AppContext)

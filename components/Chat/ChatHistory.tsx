@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { FC } from 'react'
-import type { Message } from '../../types/global'
+import type { Message } from 'types/global'
 
 const printTime = (timestamp:number):string => {
   const dateString = new Date(timestamp).toJSON()

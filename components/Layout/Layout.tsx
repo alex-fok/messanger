@@ -1,5 +1,5 @@
-import Navbar from '../Navbar'
-import type { LayoutFC } from '../../types/components/layout'
+import Navbar from 'components/Navbar'
+import type { LayoutFC } from 'types/components/layout'
 
 const Layout:LayoutFC = ({children}) => {
   return (

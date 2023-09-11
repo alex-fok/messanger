@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { Message } from '../../../global'
+import { Message } from 'types/global'
 
 interface Chat {
   participants: ObjectId[],

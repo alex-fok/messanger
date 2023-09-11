@@ -1,5 +1,5 @@
 import { Dispatch } from "react"
-import type { EventHandlers, Message, ChatListAction, ChatAction } from '../../../../types/socket/client'
+import type { EventHandlers, Message, ChatListAction, ChatAction } from 'types/socket/client'
 
 const getEvents = (dispatchActiveChat:Dispatch<ChatAction>, dispatchChatList:Dispatch<ChatListAction>):EventHandlers[] => [
   {

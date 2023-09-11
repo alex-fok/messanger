@@ -1,4 +1,4 @@
-import type { DialogFC } from '../../types/components/dialog'
+import type { DialogFC } from 'types/components/dialog'
 const Dialog:DialogFC = ({show, onClose, children}) => {
   return (
     show

@@ -1,4 +1,4 @@
-import type { ChatList, ChatListAction } from "../types/reducers/chatlistReducer"
+import type { ChatList, ChatListAction } from "types/reducers/chatlistReducer"
 
 const chatListReducer = (state: ChatList, action: ChatListAction):ChatList => {
   console.log('action:', action)
